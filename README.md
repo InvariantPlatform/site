@@ -32,10 +32,15 @@ content module plus a page that composes existing components.
 
 ## Deploy
 
-`next.config.ts` sets `output: "export"`: Cloudflare Pages serves `out/` with
-nothing running (build command `npm run build`, output directory `out`).
-When the members routes arrive, that line goes, the app gains `middleware.ts`
-for the organization check, and it runs as an app instead — nothing else changes.
+Cloudflare Workers, static assets only, declared in `wrangler.jsonc`: the
+git-connected Worker `invariant-platform` runs `npm run build` and
+`npx wrangler deploy`, which uploads `out/` and runs no server code.
+`wrangler` is pinned in `devDependencies`; without a `wrangler.jsonc` in the
+repo, `wrangler deploy` auto-configures OpenNext, which is wrong for a static
+export (and does not support this Next version) — that was the first build.
+
+When the members routes arrive, the route gate is a `main` script in the
+same `wrangler.jsonc`, in front of the same assets. `output: "export"` stays.
 
 `invariant-platform.io` must first be delegated to Cloudflare; its nameservers
 are still at the registrar's parking.

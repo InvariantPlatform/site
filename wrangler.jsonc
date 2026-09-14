@@ -1,0 +1,14 @@
+// Cloudflare Workers, static assets only: `next build` writes out/ and the
+// Worker serves it. No server code runs. When the members routes arrive
+// (ADR-185), the route gate is a `main` script added here, in front of the
+// same assets — nothing about the site's build changes.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "invariant-platform",
+  "compatibility_date": "2026-09-11",
+  "assets": {
+    "directory": "./out",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
