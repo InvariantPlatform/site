@@ -1,0 +1,16 @@
+import type { Metadata } from "next";
+import { Band, CardGrid, Flow, Intro, MembersStrip, SectionHead } from "../components/ui";
+import { flow, intro, members, repoCards, repos, shape } from "@/content/supply-chain";
+
+export const metadata: Metadata = { title: "Supply chain", description: intro.rule };
+
+export default function Page() {
+  return (
+    <>
+      <Intro {...intro} />
+      <Band><SectionHead {...shape} /><Flow steps={flow} /></Band>
+      <Band><SectionHead {...repos} /><CardGrid cards={repoCards} /></Band>
+      <MembersStrip {...members} />
+    </>
+  );
+}

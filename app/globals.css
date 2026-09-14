@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+/* Same palette as bradpenney.io — one vocabulary across both sites. */
+:root {
+  --background: #0f0f0f;
+  --background-deep: #0a0a0a;
+  --foreground: #e8e8e8;
+  --amber: #f59e0b;
+  --amber-light: #fbbf24;
+  --amber-dark: #d97706;
+  --hair: #1f2937;
+  --hair-2: #374151;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-deep: var(--background-deep);
+  --color-foreground: var(--foreground);
+  --color-amber: var(--amber);
+  --color-amber-light: var(--amber-light);
+  --color-amber-dark: var(--amber-dark);
+  --color-hair: var(--hair);
+  --color-hair-2: var(--hair-2);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+html { color-scheme: dark; }
+body { background: var(--background); color: var(--foreground); -webkit-font-smoothing: antialiased; }
+
+@layer components {
+  .shimmer {
+    background: linear-gradient(90deg, #9ca3af 0%, #fff 20%, #fbbf24 40%, #fff 60%, #9ca3af 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .pill { @apply px-3 py-1.5 rounded-md border border-hair-2 text-sm text-gray-300 whitespace-nowrap transition-colors hover:border-gray-500 hover:text-white hover:bg-gray-900; }
+  .pill-current { @apply border-gray-500 text-white; }
+  .btn { @apply inline-flex items-center gap-2.5 px-[18px] py-2.5 rounded-md border border-hair-2 text-sm text-gray-300 transition-colors hover:border-gray-500 hover:text-white hover:bg-gray-900; }
+  .btn-amber { @apply border-amber-dark text-amber-light hover:text-amber-light; }
+  .btn-solid { @apply bg-amber border-amber text-background font-semibold text-[15px] px-5 py-3 hover:bg-amber-light hover:text-background; }
+  .btn-soon { @apply border-dashed text-gray-400 cursor-default hover:bg-transparent hover:text-gray-400 hover:border-hair-2; }
+  .card { @apply block rounded-lg border border-hair border-l-2 border-l-amber p-5 text-foreground; }
+  .card-plain { @apply border-l border-l-hair; }
+  .card-link { @apply transition-colors hover:border-hair-2 hover:border-l-amber hover:bg-gray-900/50; }
+}
