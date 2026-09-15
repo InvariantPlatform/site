@@ -10,6 +10,10 @@
   "assets": {
     "directory": "./out",
     "binding": "ASSETS",
+    // Without this, a request that matches a file is answered before the
+    // script runs, and the script only sees misses. The redirect (and later
+    // the members gate) must see every request.
+    "run_worker_first": true,
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
   },
