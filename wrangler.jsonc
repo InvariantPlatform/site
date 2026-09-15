@@ -14,8 +14,8 @@
     "not_found_handling": "404-page"
   },
   "vars": {
-    // Set to "invariant-platform.io" once that zone is ACTIVE at Cloudflare
-    // (registry delegation done). Empty means: serve on every hostname, no redirect.
-    "CANONICAL_HOST": ""
+    // The zone went active 2026-09-14 21:16 (registry delegation + Universal SSL).
+    // Empty would mean: serve on every hostname, no redirect.
+    "CANONICAL_HOST": "invariant-platform.io"
   }
 }
