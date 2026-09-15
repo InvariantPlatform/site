@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Terminal from "./components/Terminal";
-import { Band, Card, JoinCta, SectionHead, Wrap } from "./components/ui";
+import { Band, JoinCta, SectionHead, SectionIndex, Wrap } from "./components/ui";
 import { hero, offer, postureRun, sections, threeRepos } from "@/content/home";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -9,17 +9,18 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
 export default function Home() {
   return (
     <>
-      <section className="pt-12 md:pt-20 pb-12">
+      <section className="pt-14 md:pt-[88px] pb-12 md:pb-16">
         <Wrap>
-          <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-8 md:gap-16 items-start">
-            <div className="flex flex-col gap-6">
-              <h1 className="text-[32px] md:text-[44px] font-bold leading-[1.1] tracking-[-0.02em]">
-                <span className="shimmer">{hero.title}</span>
+          <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-[7fr_6fr] gap-10 md:gap-[72px] items-start">
+            <div className="flex flex-col gap-7">
+              <span className="label text-dim">00&nbsp;&nbsp;Thesis</span>
+              <h1 className="font-mono text-[30px] md:text-[38px] font-medium leading-[1.15] tracking-[-0.02em]">
+                {hero.titleBefore} <span className="text-amber">{hero.titleAccent}</span> {hero.titleAfter}
               </h1>
-              <p className="text-[19px] leading-snug text-gray-400 max-w-[34em]">{hero.lede}</p>
-              <p className="text-base leading-relaxed text-gray-400 max-w-[34em]">{hero.body}</p>
+              <p className="text-lg leading-relaxed text-muted max-w-[32em]">{hero.lede}</p>
+              <p className="text-[15px] leading-relaxed text-muted max-w-[32em]">{hero.body}</p>
               <div className="flex flex-wrap gap-3 pt-2">
-                <Link href="/security-posture/" className="btn btn-amber">Read the security posture →</Link>
+                <Link href="/security-posture/" className="btn btn-solid">Read the security posture →</Link>
                 <Link href="/architecture/" className="btn">How it is built →</Link>
               </div>
             </div>
@@ -29,22 +30,17 @@ export default function Home() {
       </section>
 
       <Band>
-        <SectionHead title="What holds, and how you can tell" sub="Each section opens with what is public. The full story — the model, the failed rebuilds, every decision and what it cost — is for members." />
-        <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-4">
-          {sections.map((s) => <Card key={s.title} {...s} />)}
-          <div className="rounded-lg border border-dashed border-hair-2 p-5 flex flex-col justify-center gap-2.5">
-            <span className="text-[15px] text-gray-300">{threeRepos.title}</span>
-            <span className="text-sm leading-relaxed text-gray-400">{threeRepos.body}</span>
-          </div>
-        </div>
+        <SectionHead title="What holds, and how you can tell" sub="each section: what is public / what is for members" />
+        <SectionIndex sections={sections} note={threeRepos} />
       </Band>
 
-      <section className="py-12">
+      <section className="py-8 pb-16">
         <Wrap>
-          <div className="rounded-lg border border-hair p-5 md:p-8 grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-8 md:gap-12 items-center">
+          <div className="border border-hair-2 p-6 md:p-10 grid grid-cols-[minmax(0,1fr)] md:grid-cols-[1fr_auto] gap-8 md:gap-12 items-center">
             <div>
-              <h2 className="text-2xl font-bold tracking-[-0.01em]">{offer.title}</h2>
-              <p className="mt-3 text-[15px] leading-relaxed text-gray-400">{offer.body}</p>
+              <span className="label text-dim block mb-3">Membership</span>
+              <h2 className="font-mono text-2xl font-medium tracking-[-0.01em]">{offer.title}</h2>
+              <p className="mt-3 text-[15px] leading-relaxed text-muted max-w-[46em]">{offer.body}</p>
             </div>
             <JoinCta />
           </div>

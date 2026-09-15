@@ -15,8 +15,8 @@ import { site } from "@/site.config";
  * ok | finding | stale | none; the CSS keys off that attribute.
  */
 const inner = `
-<div data-status="root" data-state="none" class="max-w-7xl mx-auto px-4 min-h-9 py-1.5 flex flex-wrap items-center gap-x-7 gap-y-1 font-mono text-xs text-gray-400">
-  <span class="flex items-center gap-2"><span class="status-dot inline-block w-[7px] h-[7px] bg-gray-600" aria-hidden="true"></span>posture-check</span>
+<div data-status="root" data-state="none" class="max-w-7xl mx-auto px-6 min-h-9 py-1.5 flex flex-wrap items-center gap-x-7 gap-y-1 font-mono text-xs text-muted">
+  <span class="flex items-center gap-2"><span class="status-dot inline-block w-[7px] h-[7px] bg-dim" aria-hidden="true"></span>posture-check</span>
   <span>last run <span class="text-foreground" data-status="ran_at">no run recorded</span></span>
   <span data-status="held-line" hidden><span class="text-foreground" data-status="held">–</span> of <span class="text-foreground" data-status="invariants">–</span> invariants hold</span>
   <span class="status-findings" data-status="findings" hidden></span>
@@ -24,5 +24,5 @@ const inner = `
 </div>`;
 
 export default function StatusStrip() {
-  return <div className="status-strip border-b border-hair bg-[#0d1014]" dangerouslySetInnerHTML={{ __html: inner }} />;
+  return <div className="status-strip border-b border-hair bg-deep" dangerouslySetInnerHTML={{ __html: inner }} />;
 }

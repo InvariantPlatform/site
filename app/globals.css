@@ -1,21 +1,27 @@
 @import "tailwindcss";
 
-/* Same palette as bradpenney.io — one vocabulary across both sites. */
+/* Same family as bradpenney.io — black, amber, Geist, the chevron — but the
+   INSTRUMENT member of it: a cooler black, mono as the display face, rules and
+   numbers instead of cards and pills, amber only for state and action. */
 :root {
-  --background: #0f0f0f;
-  --background-deep: #0a0a0a;
-  --foreground: #e8e8e8;
+  --background: #0b0d10;
+  --background-deep: #0d1014;
+  --foreground: #e6e8eb;
+  --muted: #8b939e;
+  --dim: #5c6570;
   --amber: #f59e0b;
   --amber-light: #fbbf24;
   --amber-dark: #d97706;
-  --hair: #1f2937;
-  --hair-2: #374151;
+  --hair: #1c2128;
+  --hair-2: #2a3138;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-deep: var(--background-deep);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-dim: var(--dim);
   --color-amber: var(--amber);
   --color-amber-light: var(--amber-light);
   --color-amber-dark: var(--amber-dark);
@@ -29,20 +35,17 @@ html { color-scheme: dark; }
 body { background: var(--background); color: var(--foreground); -webkit-font-smoothing: antialiased; }
 
 @layer components {
-  .shimmer {
-    background: linear-gradient(90deg, #9ca3af 0%, #fff 20%, #fbbf24 40%, #fff 60%, #9ca3af 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .pill { @apply px-3 py-1.5 rounded-md border border-hair-2 text-sm text-gray-300 whitespace-nowrap transition-colors hover:border-gray-500 hover:text-white hover:bg-gray-900; }
-  .pill-current { @apply border-gray-500 text-white; }
-  .btn { @apply inline-flex items-center gap-2.5 px-[18px] py-2.5 rounded-md border border-hair-2 text-sm text-gray-300 transition-colors hover:border-gray-500 hover:text-white hover:bg-gray-900; }
-  .btn-amber { @apply border-amber-dark text-amber-light hover:text-amber-light; }
-  .btn-solid { @apply bg-amber border-amber text-background font-semibold text-[15px] px-5 py-3 hover:bg-amber-light hover:text-background; }
-  .btn-soon { @apply border-dashed text-gray-400 cursor-default hover:bg-transparent hover:text-gray-400 hover:border-hair-2; }
-  .card { @apply block rounded-lg border border-hair border-l-2 border-l-amber p-5 text-foreground; }
-  .card-plain { @apply border-l border-l-hair; }
-  .card-link { @apply transition-colors hover:border-hair-2 hover:border-l-amber hover:bg-gray-900/50; }
+  /* mono, letter-spaced, uppercase: labels, nav, section heads */
+  .label { @apply font-mono text-xs tracking-[0.14em] uppercase; }
+  .navlink { @apply font-mono text-xs tracking-[0.14em] uppercase text-muted transition-colors hover:text-foreground; }
+  .navlink-current { @apply text-foreground; }
+  .btn { @apply inline-flex items-center gap-2.5 font-mono text-[13px] tracking-[0.04em] px-[18px] py-3 border border-hair-2 text-foreground transition-colors hover:border-muted; }
+  .btn-solid { @apply bg-amber border-amber text-background font-medium hover:bg-amber-light hover:border-amber-light; }
+  .btn-outline { @apply border-amber-dark text-amber-light hover:border-amber; }
+  .btn-soon { @apply border-dashed text-muted cursor-default hover:border-hair-2; }
+  /* a ruled block: the instrument's unit of layout */
+  .ruled { @apply border border-hair p-5 text-foreground; }
+  .ruled-link { @apply transition-colors hover:border-hair-2 hover:bg-deep; }
 }
 
 /* Status strip states, set by the Worker (ADR-194). */

@@ -2,14 +2,16 @@ import type { CardData } from "@/app/components/ui";
 import type { TermLine } from "@/app/components/Terminal";
 
 export const hero = {
-  title: "A control you cannot verify is not a control.",
+  titleBefore: "A control you cannot",
+  titleAccent: "verify",
+  titleAfter: "is not a control.",
   lede: "Invariant Platform is a small, security-first Kubernetes platform that re-asserts its own posture every night, from outside itself, and whose only repair is a rebuild from a declaration. Every property it claims is one it checks.",
   body: "It runs on two hypervisors in a house in Nova Scotia. That is not the point. The point is that a property asserted in a document is not a property until something outside the system checks it, on a schedule, and pages when it stops being true.",
 };
 
 // A real run, kept with its finding on purpose. Replace with a newer run, never with a cleaner one.
 export const postureRun = {
-  title: "posture-check · nightly · from the host tier",
+  title: "nightly · from the host tier · read-only identity",
   command: "posture-check",
   lines: [
     { status: "ok", text: "pod security: 19/19 namespaces enforced" },
@@ -18,15 +20,15 @@ export const postureRun = {
     { status: "ok", text: "cluster-admin: 5 subjects, all expected" },
     { status: "ok", text: "jit grant: none outstanding" },
     { status: "ok", text: "flux: 5 kustomizations reconciling" },
-    { status: "ok", text: "supply chain: artifact signature verified against the pinned identity" },
+    { status: "ok", text: "supply chain: signature verified, pinned identity" },
     { status: "ok", text: "credentials: 8 external secrets syncing" },
     { status: "ok", text: "public site: 200 through the edge" },
     { status: "ok", text: "origin lock: direct bypass refused (000)" },
-    { status: "ok", text: "firewall: 3 ports refuse non-allow-listed sources" },
-    { status: "ok", text: "selinux: both hypervisors enforcing, no permissive domains" },
+    { status: "ok", text: "firewall: 3 ports refuse non-listed sources" },
+    { status: "ok", text: "selinux: both hypervisors enforcing" },
     { status: "ok", text: "host units: 8 watched, none failed" },
     { status: "ok", text: "peer: update service inactive, gates armed" },
-    { status: "FAIL", text: "systemd is degraded; failed units not on the watch list: ddns-notify.service" },
+    { status: "FAIL", text: "systemd degraded; unit not on the watch list: ddns-notify" },
   ] satisfies TermLine[],
   summary: "14 of 15 invariants hold — 1 finding, paged",
   caption: "A run with a finding, kept on purpose. A check that only ever says ok is not a check.",
