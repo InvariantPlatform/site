@@ -3,7 +3,7 @@ import { CardGrid, GitHubIcon, Intro, Wrap } from "../components/ui";
 import { site } from "@/site.config";
 import { after, consent, intro, notOpen, steps, terms } from "@/content/join";
 
-export const metadata: Metadata = { title: "Join", description: intro.paragraphs[0] };
+export const metadata: Metadata = { title: "Join", description: intro.paragraphs[0], alternates: { canonical: "/join/" } };
 
 export default function Page() {
   return (

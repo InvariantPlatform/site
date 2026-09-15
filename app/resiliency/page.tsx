@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Band, CardGrid, Intro, MembersStrip, Scorecard, SectionHead } from "../components/ui";
 import { intro, members, principles, scorecard } from "@/content/resiliency";
 
-export const metadata: Metadata = { title: "Resiliency", description: intro.rule };
+export const metadata: Metadata = { title: "Resiliency", description: intro.rule, alternates: { canonical: "/resiliency/" } };
 
 export default function Page() {
   return (

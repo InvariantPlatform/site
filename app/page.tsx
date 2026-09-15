@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Terminal from "./components/Terminal";
 import { Band, Card, JoinCta, SectionHead, Wrap } from "./components/ui";
 import { hero, offer, postureRun, sections, threeRepos } from "@/content/home";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function Home() {
   return (

@@ -3,7 +3,7 @@ import ContextView from "../components/ContextView";
 import { Band, CardGrid, Intro, MembersStrip } from "../components/ui";
 import { contextView, intro, members, principles } from "@/content/architecture";
 
-export const metadata: Metadata = { title: "Architecture", description: intro.rule };
+export const metadata: Metadata = { title: "Architecture", description: intro.rule, alternates: { canonical: "/architecture/" } };
 
 export default function Page() {
   return (

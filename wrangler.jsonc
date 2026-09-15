@@ -1,14 +1,21 @@
-// Cloudflare Workers, static assets only: `next build` writes out/ and the
-// Worker serves it. No server code runs. When the members routes arrive
-// (ADR-185), the route gate is a `main` script added here, in front of the
+// Cloudflare Workers: `next build` writes out/ and src/worker.ts serves it,
+// after one check (see the script). When the members routes arrive
+// (ADR-185), the route gate is added to the same script, in front of the
 // same assets — nothing about the site's build changes.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "invariant-platform",
+  "main": "src/worker.ts",
   "compatibility_date": "2026-09-11",
   "assets": {
     "directory": "./out",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
+  },
+  "vars": {
+    // Set to "invariant-platform.io" once that zone is ACTIVE at Cloudflare
+    // (registry delegation done). Empty means: serve on every hostname, no redirect.
+    "CANONICAL_HOST": ""
   }
 }
