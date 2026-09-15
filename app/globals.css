@@ -44,3 +44,10 @@ body { background: var(--background); color: var(--foreground); -webkit-font-smo
   .card-plain { @apply border-l border-l-hair; }
   .card-link { @apply transition-colors hover:border-hair-2 hover:border-l-amber hover:bg-gray-900/50; }
 }
+
+/* Status strip states, set by the Worker (ADR-194). */
+[data-status="root"][data-state="ok"] .status-dot { background: var(--amber); }
+[data-status="root"][data-state="finding"] .status-dot { background: var(--amber); }
+[data-status="root"][data-state="finding"] .status-findings { color: var(--amber); }
+[data-status="root"][data-state="stale"] .status-dot { background: var(--amber-dark); }
+[data-status="root"][data-state="stale"] .status-findings { color: var(--amber-light); }

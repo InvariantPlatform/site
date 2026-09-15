@@ -45,6 +45,23 @@ same `wrangler.jsonc`, in front of the same assets. `output: "export"` stays.
 `invariant-platform.io` must first be delegated to Cloudflare; its nameservers
 are still at the registrar's parking.
 
+## The status strip (ADR-194)
+
+`src/worker.ts` fills the strip under the header from Cloudflare KV, key
+`posture`, on every HTML response. The document is written by the nightly
+`posture-check` from the host tier (`substrate publish-status`, a later
+release):
+
+    {"ran_at":"2026-09-14T06:12:00Z","invariants":15,"held":14,
+     "findings":["systemd is degraded; ..."],"provisioner":"0.2.3","host":"server1"}
+
+No document → "no run recorded". Older than 26 h → "stale — no run for N days",
+in amber. Garbage → treated as no document. The strip's markup is set with
+`dangerouslySetInnerHTML` so React hydration does not undo the rewrite.
+
+To try it locally: a dev config with a local KV binding, then
+`wrangler dev --local` and `wrangler kv key put --local --binding STATUS posture '<json>'`.
+
 ## Claims
 
 Every number on the site is a number the platform keeps. The posture-check
