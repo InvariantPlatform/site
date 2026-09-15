@@ -18,10 +18,10 @@
     "not_found_handling": "404-page"
   },
   // ADR-194: the nightly posture-check publishes `posture` here; the Worker
-  // fills the status strip from it. Add the binding when the namespace exists
-  // (Storage & Databases → KV → create "invariant-platform-status", paste id):
-  //   "kv_namespaces": [{ "binding": "STATUS", "id": "<namespace id>" }],
-  // Without it the Worker serves normally and the strip reads "no run recorded".
+  // fills the status strip from it. Namespace "invariant-platform-status".
+  // Without the binding the Worker serves normally and the strip reads
+  // "no run recorded".
+  "kv_namespaces": [{ "binding": "STATUS", "id": "309b621a476d4bb1aced7b36e5d798c4" }],
   "vars": {
     // The zone went active 2026-09-14 21:16 (registry delegation + Universal SSL).
     // Empty would mean: serve on every hostname, no redirect.
