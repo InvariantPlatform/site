@@ -12,6 +12,7 @@ export default function Page() {
       <Band>
         <SectionHead title={contextView.name} sub={contextView.meta} />
         <div className="overflow-x-auto pt-4"><ContextView /></div>
+        <p className="md:hidden mt-1 label text-dim" aria-hidden="true">← the view is wider than the screen; drag it →</p>
         <p className="mt-2.5 font-mono text-xs leading-relaxed text-dim">{contextView.caption}</p>
       </Band>
       <Band><CardGrid cards={principles} /></Band>

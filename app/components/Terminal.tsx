@@ -14,7 +14,7 @@ export default function Terminal({ title, command, lines, summary, caption }: { 
           <span><span className="text-amber">$</span> {command}</span>
           <span>{title}</span>
         </div>
-        <pre className="m-0 py-4 font-mono text-[12px] md:text-[13px] leading-[1.7] text-[#c9ced4] overflow-x-auto" data-status="terminal">
+        <pre className="m-0 py-4 font-mono text-[11px] md:text-[13px] leading-[1.7] text-[#c9ced4] overflow-x-auto" data-status="terminal">
           {lines.map((l) => (
             <span key={l.text}>
               {"  "}
