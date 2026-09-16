@@ -52,13 +52,14 @@ home page, from Cloudflare KV, key `posture`, on every HTML response. The
 document is written by the nightly `posture-check --record` on the host tier
 and sent by `substrate publish-status` (v0.2.4), pass or fail:
 
-    {"ran_at":"2026-09-16T00:22:21Z","host":"server1","provisioner":"0.2.4",
+    {"ran_at":"2026-09-16T00:22:21Z","provisioner":"0.2.4",
      "invariants":15,"held":15,"findings":[],
      "lines":[{"status":"ok","text":"pod security: 19/19 namespaces enforced"}, ...]}
 
 No document → "no run recorded" and the static sample terminal. Older than
 26 h → "stale — no run for N days", in amber. Garbage → treated as no
-document. A document without `lines` fills the strip only.
+document. A document without `lines` fills the strip only. Nothing that
+names a machine is rendered, whatever the document carries.
 
 Every element the Worker rewrites is rendered with `dangerouslySetInnerHTML`
 (`lib/terminal-html.ts` builds the terminal body for both the export and the

@@ -26,7 +26,6 @@ interface Posture {
   held: number;
   findings: string[];
   provisioner: string;
-  host: string;
   /** Every line of the run, for the hero terminal. Absent from older documents. */
   lines: TermLine[];
 }
@@ -48,7 +47,6 @@ function parsePosture(raw: string | null): Posture | null {
       held: p.held,
       findings: Array.isArray(p.findings) ? p.findings.filter((f): f is string => typeof f === "string") : [],
       provisioner: typeof p.provisioner === "string" ? p.provisioner : "",
-      host: typeof p.host === "string" ? p.host : "",
       lines: Array.isArray(p.lines)
         ? p.lines
             .filter((l): l is TermLine => typeof l === "object" && l !== null && typeof (l as TermLine).text === "string")
@@ -87,7 +85,10 @@ function describe(p: Posture | null, now: Date): { state: State; ranAt: string; 
   const terminal: Terminal | undefined = p.lines.length > 0
     ? {
         html: terminalHtml(p.lines, runSummary(p.held, p.invariants, p.findings.length)),
-        title: `${formatRanAt(p.ran_at)} · from ${p.host || "the host tier"} · read-only identity`,
+        // Never the hostname: the document may carry one for the operator's
+        // journal, and a machine name is exactly the kind of detail the
+        // architecture views are checked for before publication.
+        title: `${formatRanAt(p.ran_at)} · from the host tier · read-only identity`,
         caption: p.findings.length === 0
           ? "The most recent run, published by the host that ran it. A check that only ever says ok is not a check — this one can say FAIL, and has."
           : "The most recent run, published by the host that ran it, findings included. A check that only ever says ok is not a check.",
