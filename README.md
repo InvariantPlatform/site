@@ -45,22 +45,29 @@ same `wrangler.jsonc`, in front of the same assets. `output: "export"` stays.
 `invariant-platform.io` must first be delegated to Cloudflare; its nameservers
 are still at the registrar's parking.
 
-## The status strip (ADR-194)
+## The status strip and the hero terminal (ADR-194)
 
-`src/worker.ts` fills the strip under the header from Cloudflare KV, key
-`posture`, on every HTML response. The document is written by the nightly
-`posture-check` from the host tier (`substrate publish-status`, a later
-release):
+`src/worker.ts` fills the strip under the header, and the terminal on the
+home page, from Cloudflare KV, key `posture`, on every HTML response. The
+document is written by the nightly `posture-check --record` on the host tier
+and sent by `substrate publish-status` (v0.2.4), pass or fail:
 
-    {"ran_at":"2026-09-14T06:12:00Z","invariants":15,"held":14,
-     "findings":["systemd is degraded; ..."],"provisioner":"0.2.3","host":"server1"}
+    {"ran_at":"2026-09-16T00:22:21Z","host":"server1","provisioner":"0.2.4",
+     "invariants":15,"held":15,"findings":[],
+     "lines":[{"status":"ok","text":"pod security: 19/19 namespaces enforced"}, ...]}
 
-No document → "no run recorded". Older than 26 h → "stale — no run for N days",
-in amber. Garbage → treated as no document. The strip's markup is set with
-`dangerouslySetInnerHTML` so React hydration does not undo the rewrite.
+No document → "no run recorded" and the static sample terminal. Older than
+26 h → "stale — no run for N days", in amber. Garbage → treated as no
+document. A document without `lines` fills the strip only.
+
+Every element the Worker rewrites is rendered with `dangerouslySetInnerHTML`
+(`lib/terminal-html.ts` builds the terminal body for both the export and the
+Worker). This is not optional: React 19 treats a single mismatched text node
+as a hydration failure and re-renders the whole root on the client, which
+puts the static text back over the published run everywhere at once.
 
 To try it locally: a dev config with a local KV binding, then
-`wrangler dev --local` and `wrangler kv key put --local --binding STATUS posture '<json>'`.
+`wrangler dev --local` and `wrangler kv key put --local --binding STATUS posture --path <file>`.
 
 ## Claims
 

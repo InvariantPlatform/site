@@ -9,6 +9,8 @@
 // When the members routes arrive (ADR-185) the organization check goes in
 // here too — the same script, in front of the same assets.
 
+import { terminalHtml, runSummary, type TermLine } from "../lib/terminal-html";
+
 interface Env {
   ASSETS: Fetcher;
   CANONICAL_HOST: string;
@@ -25,6 +27,8 @@ interface Posture {
   findings: string[];
   provisioner: string;
   host: string;
+  /** Every line of the run, for the hero terminal. Absent from older documents. */
+  lines: TermLine[];
 }
 
 const STATUS_KEY = "posture";
@@ -45,6 +49,11 @@ function parsePosture(raw: string | null): Posture | null {
       findings: Array.isArray(p.findings) ? p.findings.filter((f): f is string => typeof f === "string") : [],
       provisioner: typeof p.provisioner === "string" ? p.provisioner : "",
       host: typeof p.host === "string" ? p.host : "",
+      lines: Array.isArray(p.lines)
+        ? p.lines
+            .filter((l): l is TermLine => typeof l === "object" && l !== null && typeof (l as TermLine).text === "string")
+            .map((l) => ({ status: l.status === "FAIL" ? "FAIL" : "ok", text: l.text }))
+        : [],
     };
   } catch {
     return null;
@@ -69,17 +78,30 @@ function formatRanAt(ranAt: string): string {
 }
 
 /** Everything the strip shows, decided once per request; the rewriter only copies it in. */
-function describe(p: Posture | null, now: Date): { state: State; ranAt: string; findings: string; provisioner: string; held?: number; invariants?: number } {
+type Terminal = { html: string; title: string; caption: string };
+
+function describe(p: Posture | null, now: Date): { state: State; ranAt: string; findings: string; provisioner: string; held?: number; invariants?: number; terminal?: Terminal } {
   if (!p) return { state: "none", ranAt: "no run recorded", findings: "", provisioner: "–" };
+  // The hero terminal shows the published run only when the document carries
+  // its lines; an older document leaves the static sample in place.
+  const terminal: Terminal | undefined = p.lines.length > 0
+    ? {
+        html: terminalHtml(p.lines, runSummary(p.held, p.invariants, p.findings.length)),
+        title: `${formatRanAt(p.ran_at)} · from ${p.host || "the host tier"} · read-only identity`,
+        caption: p.findings.length === 0
+          ? "The most recent run, published by the host that ran it. A check that only ever says ok is not a check — this one can say FAIL, and has."
+          : "The most recent run, published by the host that ran it, findings included. A check that only ever says ok is not a check.",
+      }
+    : undefined;
   const age = ageHours(p.ran_at, now);
   const n = p.findings.length;
   const findingsText = n === 0 ? "no findings" : n === 1 ? "1 finding, paged" : `${n} findings, paged`;
   if (age > STALE_AFTER_HOURS) {
     const days = Math.floor(age / 24);
     const since = days >= 1 ? `${days} day${days === 1 ? "" : "s"}` : `${Math.floor(age)} h`;
-    return { state: "stale", ranAt: formatRanAt(p.ran_at), findings: `stale — no run for ${since}`, provisioner: p.provisioner || "–", held: p.held, invariants: p.invariants };
+    return { state: "stale", ranAt: formatRanAt(p.ran_at), findings: `stale — no run for ${since}`, provisioner: p.provisioner || "–", held: p.held, invariants: p.invariants, terminal };
   }
-  return { state: n === 0 ? "ok" : "finding", ranAt: formatRanAt(p.ran_at), findings: findingsText, provisioner: p.provisioner || "–", held: p.held, invariants: p.invariants };
+  return { state: n === 0 ? "ok" : "finding", ranAt: formatRanAt(p.ran_at), findings: findingsText, provisioner: p.provisioner || "–", held: p.held, invariants: p.invariants, terminal };
 }
 
 async function readPosture(env: Env): Promise<Posture | null> {
@@ -104,6 +126,13 @@ function fillStatus(html: Response, d: ReturnType<typeof describe>): Response {
       .on('[data-status="held"]', text(String(d.held)))
       .on('[data-status="invariants"]', text(String(d.invariants)))
       .on('[data-status="findings"]', { element(el) { el.removeAttribute("hidden"); el.setInnerContent(d.findings); } });
+  }
+  if (d.terminal) {
+    const t = d.terminal;
+    rw = rw
+      .on('[data-status="terminal"]', { element(el) { el.setInnerContent(t.html, { html: true }); } })
+      .on('[data-status="terminal-title"]', text(t.title))
+      .on('[data-status="terminal-caption"]', text(t.caption));
   }
   return rw.transform(html);
 }
