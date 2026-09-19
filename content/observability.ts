@@ -1,4 +1,4 @@
-import type { Step } from "@/app/components/ui";
+import type { Row, Step } from "@/app/components/ui";
 
 export const intro = {
   title: "Observability",
@@ -12,15 +12,27 @@ export const flow: Step[] = [
   { title: "Agents on every node", body: "Scrape metrics, ship logs. Configuration is code; a hand edit is reverted." },
   { title: "Host tier, beside the cluster", body: "Metrics and logs stores on the hypervisor, not in the thing they watch.", gate: true },
   { title: "Dashboards from git", body: "Click-ops is disabled, not discouraged. A panel that is not in the repository does not exist." },
-  { title: "Alert rules from git", body: "Rules are provisioned files, tested for the failures they name, and reloaded — not merely written." },
-  { title: "A page to a phone", body: "Every rule ends in a notification; the notifier is itself watched for silence.", gate: true },
+  { title: "Rules that read the stores", body: "Decided, not built. Today every alert is a probe of a front door or a unit; a rule that reads the metrics store and decides is the next component in the model.", planned: true },
+  { title: "A page to a phone", body: "Every probe ends in a notification, and the path has fired for real. What is not yet watched is the notifier's own silence.", gate: true },
 ];
 
 export const principles = [
   { title: "Rebuildable, like everything else", body: "The tier is provisioned by the same tool that builds the nodes. Only its data is backed up; the stack itself is a declaration and comes back from one." },
-  { title: "Rules are tested for the failure they name", body: "An alert that has never fired is a hypothesis. Each rule was written against a real incident, and the ones that were wrong — a metric label that did not exist, a job that reported success on an empty run — are in the register with their numbers." },
-  { title: "The named gap", body: "The check that pages on a finding cannot yet page on its own silence. A watcher for the watcher exists on the hosts; it does not yet close the loop end to end. That is written as a gap, not hidden under a green panel." },
+  { title: "A probe that has never fired is a hypothesis", body: "Every probe on the hosts was written after a real incident, and the path from probe to phone has been exercised for real: the night the edge lock landed, the front door went away, a page arrived within minutes, and a second page said it was back. The ones that were wrong — a job that reported success on an empty run — are in the register with their numbers." },
+  { title: "The gaps are named", body: "Below, in order. A gap under a green panel is a lie; a gap in a numbered list is a decision that has not been taken yet, and the register says which." },
 ];
+
+// The gaps, in public, each with why it is a gap and what closes it. When one
+// closes it leaves this list and becomes a line in the nightly check.
+export const gaps = {
+  title: "The named gaps",
+  sub: "written down as gaps, not hidden under a green panel · each one closes into a line of the nightly check",
+  rows: [
+    { k: "Every alert is a probe of a door, not a reading of the stores", v: "A front door answered 200 for the entire life of a backup job that had never once succeeded, and through forty-two hours of another one deadlocked. A dead backup changes no HTTP response; neither does a volume at ninety-six percent. The metrics that would say so are collected; nothing yet reads them and decides." },
+    { k: "The check pages on a finding, not on its own silence", v: "If the nightly check never runs, nothing pages. A watcher for the watcher exists on each host; it does not yet close the loop end to end. Until it does, a quiet morning is a claim the strip above cannot fully make." },
+    { k: "A peer that cannot reach a node says so quietly", v: "When a node is rebuilt its host key changes, and a peer hypervisor's probes of that node fall back to \"not checked\" — printed, uncounted, unpublished. Honest, and silent. Found this week; the roll will distribute the new key to every peer." },
+  ] satisfies Row[],
+};
 
 export const members = {
   title: "For members: the dashboards, the alert rules, and the alerting gap",

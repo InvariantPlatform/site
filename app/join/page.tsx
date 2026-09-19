@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { CardGrid, GitHubIcon, Intro, Wrap } from "../components/ui";
 import { site } from "@/site.config";
-import { after, consent, intro, notOpen, steps, terms } from "@/content/join";
+import { after, author, consent, intro, notOpen, steps, terms } from "@/content/join";
 
 export const metadata: Metadata = { title: "Join", description: intro.paragraphs[0], alternates: { canonical: "/join/" } };
 
@@ -28,6 +28,15 @@ export default function Page() {
               <span className="btn btn-soon"><GitHubIcon /> Continue with GitHub — opens with the members launch</span>
               <span className="font-mono text-xs text-muted">{after}</span>
             </div>
+          </div>
+        </Wrap>
+      </section>
+      <section className="py-8 pb-16">
+        <Wrap>
+          <div className="border-t border-hair pt-6 grid grid-cols-[minmax(0,1fr)] md:grid-cols-[200px_minmax(0,1fr)_auto] gap-4 md:gap-10 items-start">
+            <span className="label text-dim">{author.label}</span>
+            <p className="text-[15px] leading-relaxed text-muted max-w-[46em]">{author.body}</p>
+            <a href={site.author.url} className="btn whitespace-nowrap">{author.cta}</a>
           </div>
         </Wrap>
       </section>

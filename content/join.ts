@@ -14,3 +14,11 @@ export const notOpen = "This is a preview of the site. Joining is not open yet â
 export const steps = "Two steps. The invitation is sent by the platform, not by a person, and usually arrives within a minute.";
 export const consent = "Send me the occasional email about Invariant Platform. I can unsubscribe at any time.";
 export const after = "GitHub will ask you to allow an invitation to the organization. Accept it there, and the members routes open the next time you load this site.";
+
+// Who runs it. The one place on this site that points at the author's own
+// site by name in body text; the footer carries it everywhere else.
+export const author = {
+  label: "Who runs this",
+  body: "Invariant Platform is built and run by Brad Penney, a Kubernetes platform lead who writes for engineers who need something working, not just studied. The platform is the thing behind the writing: everything at bradpenney.io that says \"in production\" was tried here first.",
+  cta: "Read the writing at bradpenney.io â†’",
+};

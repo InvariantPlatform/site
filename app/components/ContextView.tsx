@@ -1,7 +1,7 @@
 /** The public view of the architecture model, drawn from the design canvas. Regenerate from the model when it changes. */
 export default function ContextView() {
   return (
-<svg viewBox="0 0 1200 380" width="100%" aria-label="Context view: how changes and visitors reach the estate" style={{ display: "block", height: "auto", minWidth: 900 }}>
+<svg viewBox="0 0 1200 380" width="100%" aria-label="Context view: how changes and visitors reach the estate" style={{ display: "block", height: "auto" }}>
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"></path></marker>
         </defs>

@@ -17,10 +17,10 @@ export const groups: { name: string; rows: Row[] }[] = [
     { k: "Secrets come from a manager, never from git", v: "Eight external secrets, all syncing." },
   ]},
   { name: "On the hosts beneath it", rows: [
-    { k: "SELinux enforcing on both hypervisors", v: "No permissive domains. Checked on this host and on its peer." },
-    { k: "No failed units on the watch list", v: "Eight units that must be healthy for the platform to be trustworthy." },
-    { k: "The peer's update service is idle and gated", v: "Nightly patching defers rather than collides." },
-    { k: "systemd is not degraded", v: "A failed unit that is not on the watch list is still a failed unit. This is the line that failed last night.", failed: true },
+    { k: "SELinux enforcing on this hypervisor", v: "No permissive domains, no custom modules. Found clean the day the check was written — which is why the check exists: nothing was watching for the drift." },
+    { k: "SELinux enforcing on every peer", v: "The same question asked of each other hypervisor over the wire. One line per peer; a peer that cannot be asked is reported as such, not counted." },
+    { k: "No failed units on the watch list", v: "Nine units that must be healthy for the platform to be trustworthy, named in the tool, not discovered at run time." },
+    { k: "Every peer's update service is idle and gated", v: "Nightly patching on one host defers to the others rather than colliding with them." },
   ]},
   { name: "At the edge", rows: [
     { k: "The public site answers through the edge", v: "Resolved by a public resolver, not the host's — a lesson from the week split-horizon made this line lie." },
@@ -29,9 +29,17 @@ export const groups: { name: string; rows: Row[] }[] = [
   ]},
 ];
 
+// Lines that exist only to fail. They are never in the fifteen; when one fires
+// it is a finding, and the count on the strip says so.
+export const failOnly = {
+  title: "And one line that exists only to fail",
+  body: "A failed unit that is not on the watch list is still a failed unit. If the host's service manager reports itself degraded, the run fails and names the unit — there is no held version of this line, so it is never counted, and a run with no findings has proven it was not needed.",
+};
+
 export const why = [
   { title: "Why it runs from outside", body: "A control that runs inside what it is checking cannot report that the thing is gone. The check runs on the hypervisors as a timer, with a read-only identity, and pages on failure. What it cannot yet do is page on its own silence — that gap is named, not hidden." },
   { title: "Why the output is the interface", body: "The check reports what is wrong, never that it ran. A clean exit with no findings is distinguishable from a broken run, and a run that could not see something fails loudly instead of passing quietly." },
+  { title: "Why \"not checked\" is not \"held\"", body: "For a while, a peer that could not be reached was filed as an invariant that held, and the count went up when the check could see less. That is fixed: a thing not asserted is printed as information and counted as nothing. The number on the strip is the number of properties actually asserted that morning — no more, and on a bad morning, fewer." },
 ];
 
 export const members = {

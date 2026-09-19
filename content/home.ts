@@ -42,9 +42,18 @@ export const sections: CardData[] = [
   { title: "Supply chain", href: "/supply-chain/", body: "Nothing reaches the cluster except a signed artifact from one named workflow. Pushing to git deploys nothing; that is the point.", meta: "Public: the flow, and the three repositories. Members: the verification chain end to end, and the tenant boundary." },
 ];
 
+// The register: every decision the platform has taken has a number, a category,
+// and the property it asserted. Public: the shape. Members: the decisions.
+export const register = {
+  title: "The decision register",
+  sub: "twelve categories · every entry numbered · nothing deleted",
+  body: "Every choice that shaped the platform is written down before it is built, numbered, and filed under one of twelve categories. A decision that turned out wrong is not deleted; it is superseded by a later number that says why. Most of them record a property that was asserted and, more often than not, did not hold the first time it was checked — which is the point of writing them down.",
+  aside: "Members read the decisions. The public page shows their shape, so the count on the strip is a count of something you can see.",
+};
+
 export const threeRepos = {
-  title: "Three repositories, three owners.",
-  body: "The platform builds the cluster. The platform's configuration is what reconciles onto it. The workloads belong to whoever wrote them, in their own repository, behind a tenant boundary the platform enforces. That separation is the pattern this whole site argues for.",
+  title: "Where the code lives, and who owns it",
+  body: "Three repositories. The platform team owns two: one builds the machines and the cluster; one holds the configuration that reconciles onto it. Every application is a tenant in a third, owned by whoever wrote it, reconciled under an identity that cannot touch anything it was not given. The platform never owns an app; an app never owns the platform. That separation is the pattern this whole site argues for.",
 };
 
 export const offer = {

@@ -120,18 +120,21 @@ export function RowList({ name, rows }: { name: string; rows: Row[] }) {
 }
 
 /** Left-to-right flow of steps; gated steps carry the amber rule. Stacks on narrow screens. */
-export type Step = { title: string; body: string; gate?: boolean };
+export type Step = { title: string; body: string; gate?: boolean; planned?: boolean };
 export function Flow({ steps }: { steps: Step[] }) {
   return (
     <ol className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-5 gap-3 lg:gap-0">
       {steps.map((s, i) => (
-        <li key={s.title} className={`relative border p-4 ${s.gate ? "border-amber-dark" : "border-hair-2"} ${i > 0 ? "lg:ml-7 mt-2 lg:mt-0" : ""}`}>
+        <li key={s.title} className={`relative border p-4 ${s.gate ? "border-amber-dark" : "border-hair-2"} ${s.planned ? "border-dashed" : ""} ${i > 0 ? "lg:ml-7 mt-2 lg:mt-0" : ""}`}>
           {i > 0 && (
             <span aria-hidden="true" className="absolute font-mono text-amber left-1/2 -top-[18px] -translate-x-1/2 lg:left-[-22px] lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-0">
               <span className="lg:hidden">↓</span><span className="hidden lg:inline">→</span>
             </span>
           )}
-          <span className="font-mono text-xs text-dim block mb-1">{String(i + 1).padStart(2, "0")}</span>
+          <span className="font-mono text-xs text-dim block mb-1">
+            {String(i + 1).padStart(2, "0")}
+            {s.planned && <span className="ml-2 text-amber">decided · not built</span>}
+          </span>
           <span className="block text-[15px] font-semibold">{s.title}</span>
           <span className="block mt-1 text-xs leading-snug text-muted">{s.body}</span>
         </li>
@@ -176,6 +179,26 @@ export function SectionIndex({ sections, note }: { sections: CardData[]; note: {
         <span className="font-mono text-[13px] text-dim pt-0.5">—</span>
         <span className="text-[15px] text-foreground/80">{note.title}</span>
         <span className="text-sm leading-relaxed text-muted md:col-span-2">{note.body}</span>
+      </div>
+    </div>
+  );
+}
+
+/** The decision register's shape: numbered categories with a count each. Two ruled columns; no titles — those are for members. */
+export function Register({ categories }: { categories: readonly { name: string; n: number }[] }) {
+  const total = categories.reduce((a, c) => a + c.n, 0);
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 md:gap-x-12 border-t border-hair">
+      {categories.map((c, i) => (
+        <div key={c.name} className="grid grid-cols-[40px_minmax(0,1fr)_auto] gap-4 items-baseline py-3 border-b border-hair">
+          <span className="font-mono text-xs text-dim">{String(i + 1).padStart(2, "0")}</span>
+          <span className="text-[15px]">{c.name}</span>
+          <span className="font-mono text-sm text-muted tabular-nums">{c.n}</span>
+        </div>
+      ))}
+      <div className="md:col-span-2 flex justify-between items-baseline py-3 font-mono text-xs text-dim">
+        <span>a decision is a numbered property; a superseded one stays, marked</span>
+        <span className="text-muted tabular-nums">{total}</span>
       </div>
     </div>
   );

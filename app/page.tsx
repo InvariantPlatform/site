@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Terminal from "./components/Terminal";
-import { Band, JoinCta, SectionHead, SectionIndex, Wrap } from "./components/ui";
-import { hero, offer, postureRun, sections, threeRepos } from "@/content/home";
+import { Band, JoinCta, Register, SectionHead, SectionIndex, Wrap } from "./components/ui";
+import { hero, offer, postureRun, register, sections, threeRepos } from "@/content/home";
+import { site } from "@/site.config";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
@@ -32,6 +33,17 @@ export default function Home() {
       <Band>
         <SectionHead title="What holds, and how you can tell" sub="each section: what is public / what is for members" />
         <SectionIndex sections={sections} note={threeRepos} />
+      </Band>
+
+      <Band>
+        <SectionHead title={register.title} sub={register.sub} />
+        <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-8 md:gap-16 items-start">
+          <div>
+            <p className="text-[15px] leading-relaxed text-muted">{register.body}</p>
+            <p className="mt-4 font-mono text-xs leading-relaxed text-dim">{register.aside}</p>
+          </div>
+          <Register categories={site.register} />
+        </div>
       </Band>
 
       <section className="py-8 pb-16">
