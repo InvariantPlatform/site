@@ -162,6 +162,14 @@ const worker = {
       return Response.redirect(url.toString(), 301);
     }
     const asset = await env.ASSETS.fetch(request);
+    // The social card is written by the static export with no extension
+    // (/opengraph-image), so the asset store cannot infer its type. Crawlers
+    // want image/png and some refuse an octet-stream.
+    if (url.pathname === "/opengraph-image") {
+      const png = new Response(asset.body, asset);
+      png.headers.set("content-type", "image/png");
+      return canonical && !preview ? withHsts(png) : png;
+    }
     const res = (asset.headers.get("content-type") ?? "").includes("text/html")
       ? fillStatus(asset, describe(await readPosture(env), new Date()))
       : asset;
