@@ -1,6 +1,8 @@
 // The Worker in front of the static export (ADR-194). On every request:
-//   1. a non-canonical hostname (invariant-platform.dev, www.) is sent to the
-//      canonical one with a 301; *.workers.dev previews are left alone;
+//   1. a non-canonical hostname (invariant-platform.dev, www.) or plain http
+//      is sent to https on the canonical one with a 301; *.workers.dev
+//      previews are left alone. Every canonical response carries HSTS, so a
+//      browser that has seen the site once never asks for http again;
 //   2. the asset is served;
 //   3. if it is HTML, the status strip's `data-status` placeholders are
 //      filled from Cloudflare KV — the document the nightly posture-check
@@ -138,19 +140,32 @@ function fillStatus(html: Response, d: ReturnType<typeof describe>): Response {
   return rw.transform(html);
 }
 
+// One year, subdomains included, preload-eligible. Only ever sent over https
+// on the canonical host, which is the only place the header means anything.
+const HSTS = "max-age=31536000; includeSubDomains; preload";
+
+function withHsts(res: Response): Response {
+  const out = new Response(res.body, res);
+  out.headers.set("Strict-Transport-Security", HSTS);
+  return out;
+}
+
 const worker = {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const canonical = env.CANONICAL_HOST;
-    if (canonical && url.hostname !== canonical && !url.hostname.endsWith(".workers.dev")) {
+    const preview = url.hostname.endsWith(".workers.dev");
+    if (canonical && !preview && (url.hostname !== canonical || url.protocol !== "https:")) {
       url.hostname = canonical;
       url.protocol = "https:";
       url.port = "";
       return Response.redirect(url.toString(), 301);
     }
     const asset = await env.ASSETS.fetch(request);
-    if (!(asset.headers.get("content-type") ?? "").includes("text/html")) return asset;
-    return fillStatus(asset, describe(await readPosture(env), new Date()));
+    const res = (asset.headers.get("content-type") ?? "").includes("text/html")
+      ? fillStatus(asset, describe(await readPosture(env), new Date()))
+      : asset;
+    return canonical && !preview ? withHsts(res) : res;
   },
 };
 
