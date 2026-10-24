@@ -2,7 +2,7 @@ import type { Row } from "@/app/components/ui";
 
 export const intro = {
   title: "Security posture",
-  paragraphs: ["Fifteen properties the platform claims. Each one is re-asserted every night by a process that runs outside the cluster, as an identity that can only read, and pages when the property no longer holds. What follows is the list and what each line means. How each is enforced, and the incident that put it on the list, is for members."],
+  paragraphs: ["Eighteen properties the platform claims. Each one is re-asserted every night by a process that runs outside the cluster, as an identity that can only read, and pages when the property no longer holds. What follows is the list and what each line means. How each is enforced, and the incident that put it on the list, is for members."],
 };
 
 export const groups: { name: string; rows: Row[] }[] = [
@@ -27,9 +27,13 @@ export const groups: { name: string; rows: Row[] }[] = [
     { k: "A direct hit on the origin is refused", v: "The one finding in the whole list that would mean someone bypassed the edge." },
     { k: "Restricted ports refuse non-listed sources", v: "Probed from a source that must be denied, then from one that must be allowed." },
   ]},
+  { name: "The backups a rebuild would restore from", rows: [
+    { k: "The cluster's own state was snapshotted recently", v: "The only repair is a rebuild, and a rebuild restores from this. For months nothing asserted that it had run; a restore drill passing once says the mechanism worked, not that last night produced a file." },
+    { k: "Every declared application backup succeeded recently", v: "One line per backup the configuration declares; two today. The last success is what counts, not the last attempt: a job that fires every night and fails every night looks scheduled forever. A declared backup that has disappeared from the cluster is a finding, not one fewer thing to check." },
+  ]},
 ];
 
-// Lines that exist only to fail. They are never in the fifteen; when one fires
+// Lines that exist only to fail. They are never in the count; when one fires
 // it is a finding, and the count on the strip says so.
 export const failOnly = {
   title: "And one line that exists only to fail",
