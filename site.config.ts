@@ -6,7 +6,7 @@ export const site = {
   description:
     "A small, security-first Kubernetes platform that re-asserts its own posture every night, from outside itself, and whose only repair is a rebuild from a declaration.",
   author: { name: "Brad Penney", url: "https://www.bradpenney.io" },
-  stats: { decisions: 208, invariants: 18, rebuilds: 7, restoreDrills: 2, failureDomains: 2 },
+  stats: { decisions: 210, invariants: 18, rebuilds: 7, restoreDrills: 2, failureDomains: 2 },
   // The register's categories, with the count of decisions in each. Generated
   // from the register's index; a category's count moves when a decision lands.
   register: [
