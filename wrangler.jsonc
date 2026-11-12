@@ -25,6 +25,15 @@
   "vars": {
     // The zone went active 2026-09-14 21:16 (registry delegation + Universal SSL).
     // Empty would mean: serve on every hostname, no redirect.
-    "CANONICAL_HOST": "invariant-platform.io"
+    "CANONICAL_HOST": "invariant-platform.io",
+    // The members gate and join flow (ADR-210, src/gate). None of these is a
+    // secret; the App's client secret, private key, SESSION_SECRET and
+    // BUTTONDOWN_API_KEY are Worker secrets, set in the dashboard. The App
+    // "invariant-platform-members" holds ONE permission: Organization
+    // members, write (read back 2026-11-12: no other permission, no events).
+    "GITHUB_ORG": "InvariantPlatform",
+    "GITHUB_APP_ID": "5726583",
+    "GITHUB_APP_CLIENT_ID": "Iv23liReufa92bz25es0",
+    "GITHUB_APP_INSTALLATION_ID": "181205606"
   }
 }
