@@ -3,17 +3,19 @@
 //      is sent to https on the canonical one with a 301; *.workers.dev
 //      previews are left alone. Every canonical response carries HSTS, so a
 //      browser that has seen the site once never asks for http again;
-//   2. the asset is served;
-//   3. if it is HTML, the status strip's `data-status` placeholders are
+//   2. a members path (/members/…) or a sign-in path (/auth/…) is answered by
+//      the gate (src/gate, ADR-210) and goes no further: members content is
+//      never in the static export;
+//   3. otherwise the asset is served;
+//   4. if it is HTML, the status strip's `data-status` placeholders are
 //      filled from Cloudflare KV — the document the nightly posture-check
 //      published from the host tier. No document: the strip says so. A
 //      document older than STALE_AFTER_HOURS: the strip says that, in amber.
-// When the members routes arrive (ADR-185) the organization check goes in
-// here too — the same script, in front of the same assets.
 
 import { terminalHtml, runSummary, type TermLine } from "../lib/terminal-html";
+import { gate, type GateEnv } from "./gate/index.ts";
 
-interface Env {
+interface Env extends GateEnv {
   ASSETS: Fetcher;
   CANONICAL_HOST: string;
   // Bound in wrangler.jsonc once the namespace exists. Optional so a build
@@ -161,6 +163,8 @@ const worker = {
       url.port = "";
       return Response.redirect(url.toString(), 301);
     }
+    const gated = await gate(request, env, url);
+    if (gated) return canonical && !preview ? withHsts(gated) : gated;
     const asset = await env.ASSETS.fetch(request);
     // The social card is written by the static export with no extension
     // (/opengraph-image), so the asset store cannot infer its type. Crawlers

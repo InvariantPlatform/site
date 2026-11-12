@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint && tsc -p src --noEmit"
+    "lint": "eslint && tsc -p src --noEmit",
+    "test": "node --test src/gate/"
   },
   "dependencies": {
     "next": "16.4.3",
