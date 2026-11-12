@@ -11,9 +11,9 @@ export const terms = [
 ];
 
 export const notOpen = "This is a preview of the site. Joining is not open yet — the invitation, the email list and the members routes arrive together. Nothing on this page collects anything.";
-export const steps = "Two steps. The invitation is sent by the platform, not by a person, and usually arrives within a minute.";
+export const steps = "Three steps: sign in with GitHub, confirm your email, accept the invitation. The invitation is sent by the platform, not by a person, the moment you confirm.";
 export const consent = "Send me the occasional email about Invariant Platform. I can unsubscribe at any time.";
-export const after = "GitHub will ask you to allow an invitation to the organization. Accept it there, and the members routes open the next time you load this site.";
+export const after = "The confirmation email comes from Buttondown, the list's provider. Once you click it, accept the organization invitation on GitHub, and the members routes open.";
 
 // Who runs it. The one place on this site that points at the author's own
 // site by name in body text; the footer carries it everywhere else.

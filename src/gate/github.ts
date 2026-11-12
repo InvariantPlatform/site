@@ -107,3 +107,40 @@ export async function isOrgMember(cfg: AppConfig, login: string, fetcher: Fetch,
   if (res.status === 404) return false;
   throw new Error(`membership check answered ${res.status}`);
 }
+
+export type OrgState = "active" | "pending" | "none";
+
+/**
+ * The reader's standing in the org: a member ("active"), invited and not yet
+ * accepted ("pending"), or neither. Read before inviting, so reloading the
+ * join page never sends a second invitation email. Needs members: read.
+ */
+export async function orgMembership(cfg: AppConfig, login: string, fetcher: Fetch, nowMs: number): Promise<OrgState> {
+  const token = await installationToken(cfg, fetcher, nowMs);
+  const res = await fetcher(`${API}/orgs/${encodeURIComponent(cfg.org)}/memberships/${encodeURIComponent(login)}`, {
+    headers: apiHeaders(`Bearer ${token}`),
+    redirect: "manual",
+  });
+  if (res.status === 404) return "none";
+  const body = (await res.json()) as { state?: string };
+  if (res.status === 200 && (body.state === "active" || body.state === "pending")) return body.state;
+  throw new Error(`membership lookup answered ${res.status}`);
+}
+
+/**
+ * Invite `login` as a plain member. GitHub emails the invitation; the reader
+ * accepts it on github.com. Needs members: write — the ONE write permission
+ * the App holds. Never an owner role, whatever the caller passes.
+ */
+export async function inviteToOrg(cfg: AppConfig, login: string, fetcher: Fetch, nowMs: number): Promise<OrgState> {
+  const token = await installationToken(cfg, fetcher, nowMs);
+  const res = await fetcher(`${API}/orgs/${encodeURIComponent(cfg.org)}/memberships/${encodeURIComponent(login)}`, {
+    method: "PUT",
+    headers: { ...apiHeaders(`Bearer ${token}`), "content-type": "application/json" },
+    body: JSON.stringify({ role: "member" }),
+    redirect: "manual",
+  });
+  const body = (await res.json()) as { state?: string; role?: string };
+  if (res.status === 200 && body.role === "member" && (body.state === "active" || body.state === "pending")) return body.state;
+  throw new Error(`invitation answered ${res.status}`);
+}

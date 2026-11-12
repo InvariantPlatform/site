@@ -13,11 +13,19 @@ export default function Page() {
         <Wrap>
           <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-8 md:gap-16 items-start">
             <CardGrid cards={terms} cols={2} />
-            {/* Prototype: a form-shaped explanation. No input is live; nothing is submitted. */}
+            {site.joinOpen ? (
+              // Live: the form itself is served by the Worker (src/gate/join.ts)
+              // after GitHub sign-in, so this static page collects nothing.
+              <div className="border border-hair-2 p-6 flex flex-col gap-4">
+                <span className="font-mono text-xs text-muted">{steps}</span>
+                <span className="text-sm text-muted leading-relaxed">{consent}</span>
+                <a href="/join/apply" className="btn"><GitHubIcon /> Continue with GitHub</a>
+                <span className="font-mono text-xs text-muted">{after}</span>
+              </div>
+            ) : (
+            /* Preview: a form-shaped explanation. No input is live; nothing is submitted. */
             <div className="border border-hair-2 p-6 flex flex-col gap-4">
-              {!site.joinOpen && (
-                <p className="border-l-2 border-amber-dark bg-amber-dark/5 px-4 py-3 text-sm text-muted">{notOpen}</p>
-              )}
+              <p className="border-l-2 border-amber-dark bg-amber-dark/5 px-4 py-3 text-sm text-muted">{notOpen}</p>
               <span className="font-mono text-xs text-muted">{steps}</span>
               <span className="font-mono text-xs text-muted">Your email</span>
               <div className="border border-hair-2 bg-deep px-3 py-2.5 font-mono text-sm text-dim">you@example.com</div>
@@ -28,6 +36,7 @@ export default function Page() {
               <span className="btn btn-soon"><GitHubIcon /> Continue with GitHub — opens with the members launch</span>
               <span className="font-mono text-xs text-muted">{after}</span>
             </div>
+            )}
           </div>
         </Wrap>
       </section>

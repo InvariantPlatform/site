@@ -11,37 +11,20 @@
 // Members content is never in the static export or the public repository. It
 // is fetched from MEMBERS_ORIGIN (private, origin-locked) with a shared secret
 // header, and every gated or auth response is private, uncached and noindex.
+// The join flow's two paths (/join/apply, /join/status) are routed from here
+// to join.ts, which shares this file's sign-in and fails closed the same way.
 
-import { authorizeUrl, isOrgMember, signedInUser, type AppConfig, type Fetch } from "./github.ts";
+import { authorizeUrl, isOrgMember, signedInUser, type Fetch } from "./github.ts";
 import { clearCookie, readCookie, seal, setCookie, unseal } from "./session.ts";
+import { GATED_PREFIX, OAUTH_COOKIE, SESSION_COOKIE, appConfig, escapeHtml, page, privateHeaders, redirect, unavailable, type GateEnv, type Session } from "./common.ts";
+import { JOIN_PATHS, join } from "./join.ts";
 
-export interface GateEnv {
-  GITHUB_ORG?: string;
-  GITHUB_APP_ID?: string;
-  GITHUB_APP_INSTALLATION_ID?: string;
-  GITHUB_APP_CLIENT_ID?: string;
-  GITHUB_APP_CLIENT_SECRET?: string;
-  GITHUB_APP_PRIVATE_KEY?: string;
-  SESSION_SECRET?: string;
-  MEMBERS_ORIGIN?: string;
-  MEMBERS_ORIGIN_SECRET?: string;
-}
+export { GATED_PREFIX, OAUTH_COOKIE, SESSION_COOKIE, JOIN_COOKIE, type GateEnv } from "./common.ts";
 
-export const GATED_PREFIX = "/members";
-export const SESSION_COOKIE = "__Host-ip_session";
-export const OAUTH_COOKIE = "__Host-ip_oauth";
 const SESSION_DAYS = 7;
 /** How long a membership answer is trusted. Removal takes effect within this. */
 export const RECHECK_SECONDS = 10 * 60;
 const OAUTH_SECONDS = 10 * 60;
-
-interface Session {
-  login: string;
-  id: number;
-  member: boolean;
-  checked: number;
-  exp: number;
-}
 
 export function isGated(pathname: string): boolean {
   return pathname === GATED_PREFIX || pathname.startsWith(`${GATED_PREFIX}/`);
@@ -57,38 +40,6 @@ export function safeNext(next: string | null, origin: string): string {
   } catch {
     return fallback;
   }
-}
-
-function appConfig(env: GateEnv): AppConfig | null {
-  const { GITHUB_ORG: org, GITHUB_APP_ID: appId, GITHUB_APP_INSTALLATION_ID: installationId, GITHUB_APP_CLIENT_ID: clientId, GITHUB_APP_CLIENT_SECRET: clientSecret, GITHUB_APP_PRIVATE_KEY: privateKey } = env;
-  if (!org || !appId || !installationId || !clientId || !clientSecret || !privateKey || !env.SESSION_SECRET) return null;
-  return { org, appId, installationId, clientId, clientSecret, privateKey };
-}
-
-function privateHeaders(h: Headers): Headers {
-  h.set("cache-control", "private, no-store");
-  h.set("x-robots-tag", "noindex, nofollow");
-  h.set("vary", "cookie");
-  return h;
-}
-
-function page(status: number, title: string, body: string, extra?: HeadersInit): Response {
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>${title} · Invariant Platform</title><style>body{margin:0;background:#0b0d10;color:#d7dae0;font:15px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;display:grid;place-items:center;min-height:100vh;padding:16px;box-sizing:border-box}main{max-width:36rem}h1{font-size:1.1rem;color:#f5b041;margin:0 0 1rem}a{color:#f5b041}</style></head><body><main><h1>${title}</h1>${body}</main></body></html>`;
-  const h = privateHeaders(new Headers(extra));
-  h.set("content-type", "text/html; charset=utf-8");
-  return new Response(html, { status, headers: h });
-}
-
-function redirect(location: string, cookies: string[] = []): Response {
-  const h = privateHeaders(new Headers({ location }));
-  for (const c of cookies) h.append("set-cookie", c);
-  return new Response(null, { status: 302, headers: h });
-}
-
-const unavailable = () => page(503, "Members area unavailable", "<p>Membership could not be confirmed just now, so nothing is shown. Try again in a minute.</p>");
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
 
 async function serveMembers(request: Request, url: URL, env: GateEnv, fetcher: Fetch): Promise<Response> {
@@ -114,6 +65,7 @@ async function serveMembers(request: Request, url: URL, env: GateEnv, fetcher: F
 export async function gate(request: Request, env: GateEnv, url: URL, fetcher: Fetch = fetch, nowMs: number = Date.now()): Promise<Response | null> {
   const p = url.pathname;
   const isAuth = p.startsWith("/auth/");
+  if (JOIN_PATHS.has(p)) return join(request, env, url, appConfig(env), fetcher, nowMs);
   if (!isAuth && !isGated(p)) return null;
   if (request.method !== "GET" && request.method !== "HEAD") return page(405, "Method not allowed", "<p>Read-only.</p>");
 
