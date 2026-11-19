@@ -1,15 +1,14 @@
 // The privacy policy. Google requires one before an OAuth client can be
 // published to production, and the platform's backups write to Google Drive
-// through that client. Kept to what is TRUE: `site.joinOpen` picks which
-// website text is shown, so this page and the join flow open together.
-// Review the wording and move `updated` in the same commit that sets
-// joinOpen: true.
-export const updated = "2026-11-11";
+// through that client. Kept to what is TRUE: the join flow is live (at
+// /join/apply, unlinked until site.joinOpen), so its processing is described
+// here whether or not the site advertises it. Move `updated` with any change.
+export const updated = "2026-11-19";
 
 export const intro = {
   title: "Privacy",
   paragraphs: [
-    "Invariant Platform is one person's infrastructure, not a service with users. This page says exactly what it collects, which today is almost nothing.",
+    "Invariant Platform is one person's infrastructure, not a service with users. This page says exactly what it collects, and why.",
   ],
 };
 
@@ -18,20 +17,10 @@ interface Section {
   body: string[];
 }
 
-const websiteToday: Section[] = [
-  {
-    title: "This website",
-    body: [
-      "The site sets no cookies, runs no analytics and loads no third-party trackers. There are no accounts and no forms that submit anything.",
-      "It is served by Cloudflare, which processes standard request data (IP address, user agent, the page requested) to deliver and protect the site, under Cloudflare's own privacy policy. This site does not receive or keep that data.",
-    ],
-  },
-];
-
-// Shown once joining opens (ADR-185). PIPEDA: what, why, where, how long, how
-// to have it deleted. CASL: express consent, sender identified, an
-// unsubscribe in every message (the provider adds it).
-const websiteMembership: Section[] = [
+// PIPEDA: what, why, where, how long, how to have it deleted. CASL: express
+// consent, sender identified, an unsubscribe in every message (the provider
+// adds it). ADR-185, ADR-210.
+const website: Section[] = [
   {
     title: "This website",
     body: [
@@ -57,7 +46,8 @@ const websiteMembership: Section[] = [
   {
     title: "How long, and deleting it",
     body: [
-      "You stay on the list until you unsubscribe, and in the organization until you leave it or ask to be removed. Ask through the author's site, linked in the footer, and both the list entry and the membership are deleted.",
+      "You stay on the list until you unsubscribe, and in the organization until you leave it, unsubscribe, or ask to be removed. Unsubscribing ends the membership too: Buttondown tells the site, which checks with Buttondown that you really left the list and then removes your account from the organization. Re-subscribing does not bring it back; join again instead.",
+      "To have everything deleted, ask through the author's site, linked in the footer, and both the list entry and the membership are removed.",
     ],
   },
 ];
@@ -74,12 +64,12 @@ const always: Section[] = [
   {
     title: "Changes and contact",
     body: [
-      "If anything here changes, for example when membership opens, this page is updated before the change goes live, and the date below moves with it.",
+      "If anything here changes, this page is updated before the change goes live, and the date below moves with it.",
       "Questions go to the operator through the author's site, linked in the footer.",
     ],
   },
 ];
 
-export function sections(joinOpen: boolean): Section[] {
-  return [...(joinOpen ? websiteMembership : websiteToday), ...always];
+export function sections(): Section[] {
+  return [...website, ...always];
 }

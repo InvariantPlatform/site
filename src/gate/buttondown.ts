@@ -50,7 +50,7 @@ export async function createSubscriber(apiKey: string, email: string, metadata: 
   throw new Error(`subscriber create answered ${res.status}`);
 }
 
-/** The subscriber, or null when Buttondown has no such address. */
+/** The subscriber, or null when Buttondown has none. `email` may also be the subscriber's id. */
 export async function getSubscriber(apiKey: string, email: string, fetcher: Fetch): Promise<Subscriber | null> {
   const res = await fetcher(`${API}/subscribers/${encodeURIComponent(email)}`, { headers: headers(apiKey) });
   if (res.status === 404) return null;

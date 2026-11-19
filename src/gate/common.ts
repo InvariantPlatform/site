@@ -16,6 +16,8 @@ export interface GateEnv {
   MEMBERS_ORIGIN_SECRET?: string;
   /** Unset = joining is closed (503). The newsletter provider holds the list. */
   BUTTONDOWN_API_KEY?: string;
+  /** The Buttondown webhook's signing key. Unset = unsubscribes are not acted on (503, Buttondown retries). */
+  BUTTONDOWN_WEBHOOK_SECRET?: string;
 }
 
 export const GATED_PREFIX = "/members";

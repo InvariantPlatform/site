@@ -19,6 +19,7 @@ import { authorizeUrl, isOrgMember, signedInUser, type Fetch } from "./github.ts
 import { clearCookie, readCookie, seal, setCookie, unseal } from "./session.ts";
 import { GATED_PREFIX, OAUTH_COOKIE, SESSION_COOKIE, appConfig, escapeHtml, page, privateHeaders, redirect, unavailable, type GateEnv, type Session } from "./common.ts";
 import { JOIN_PATHS, join } from "./join.ts";
+import { WEBHOOK_PATH, buttondownWebhook } from "./unsubscribe.ts";
 
 export { GATED_PREFIX, OAUTH_COOKIE, SESSION_COOKIE, JOIN_COOKIE, type GateEnv } from "./common.ts";
 
@@ -82,6 +83,7 @@ async function serveMembers(request: Request, url: URL, env: GateEnv, fetcher: F
 export async function gate(request: Request, env: GateEnv, url: URL, fetcher: Fetch = fetch, nowMs: number = Date.now()): Promise<Response | null> {
   const p = url.pathname;
   const isAuth = p.startsWith("/auth/");
+  if (p === WEBHOOK_PATH) return buttondownWebhook(request, env, appConfig(env), fetcher, nowMs);
   if (JOIN_PATHS.has(p)) return join(request, env, url, appConfig(env), fetcher, nowMs);
   if (!isAuth && !isGated(p)) return null;
   if (request.method !== "GET" && request.method !== "HEAD") return page(405, "Method not allowed", "<p>Read-only.</p>");

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Wrap } from "../components/ui";
-import { site } from "@/site.config";
 import { intro, sections, updated } from "@/content/privacy";
 
 export const metadata: Metadata = { title: "Privacy", description: intro.paragraphs[0], alternates: { canonical: "/privacy/" } };
@@ -16,7 +15,7 @@ export default function Page() {
           ))}
         </Wrap>
       </section>
-      {sections(site.joinOpen).map((s) => (
+      {sections().map((s) => (
         <section key={s.title} className="py-6">
           <Wrap>
             <h2 className="label text-muted font-medium border-b border-hair pb-3.5 mb-5">{s.title}</h2>

@@ -144,3 +144,32 @@ export async function inviteToOrg(cfg: AppConfig, login: string, fetcher: Fetch,
   if (res.status === 200 && body.role === "member" && (body.state === "active" || body.state === "pending")) return body.state;
   throw new Error(`invitation answered ${res.status}`);
 }
+
+export type Removal = "removed" | "not-a-member" | "owner-kept";
+
+/**
+ * Take GitHub account `githubId` out of the org: the other half of joining
+ * (ADR-210). The account is named by its NUMBER, which never changes; the
+ * login is looked up fresh, because a renamed account would otherwise be
+ * missed and a recycled login could name someone else. A pending invitation
+ * is cancelled the same way. An owner (role admin) is never removed, whatever
+ * list they unsubscribe from: the App removes plain members only.
+ */
+export async function removeFromOrg(cfg: AppConfig, githubId: number, fetcher: Fetch, nowMs: number): Promise<Removal> {
+  const token = await installationToken(cfg, fetcher, nowMs);
+  const userRes = await fetcher(`${API}/user/${githubId}`, { headers: apiHeaders(`Bearer ${token}`), redirect: "manual" });
+  if (userRes.status === 404) return "not-a-member"; // the account itself is gone
+  const user = (await userRes.json()) as { login?: string; id?: number };
+  if (userRes.status !== 200 || typeof user.login !== "string" || user.id !== githubId) throw new Error(`user lookup answered ${userRes.status}`);
+
+  const path = `${API}/orgs/${encodeURIComponent(cfg.org)}/memberships/${encodeURIComponent(user.login)}`;
+  const memRes = await fetcher(path, { headers: apiHeaders(`Bearer ${token}`), redirect: "manual" });
+  if (memRes.status === 404) return "not-a-member";
+  const mem = (await memRes.json()) as { role?: string; state?: string };
+  if (memRes.status !== 200) throw new Error(`membership lookup answered ${memRes.status}`);
+  if (mem.role !== "member") return "owner-kept";
+
+  const del = await fetcher(path, { method: "DELETE", headers: apiHeaders(`Bearer ${token}`), redirect: "manual" });
+  if (del.status === 204 || del.status === 404) return "removed";
+  throw new Error(`removal answered ${del.status}`);
+}
