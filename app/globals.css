@@ -54,3 +54,55 @@ body { background: var(--background); color: var(--foreground); -webkit-font-smo
 [data-status="root"][data-state="finding"] .status-findings { color: var(--amber); }
 [data-status="root"][data-state="stale"] .status-dot { background: var(--amber-dark); }
 [data-status="root"][data-state="stale"] .status-findings { color: var(--amber-light); }
+
+/* ---------------------------------------------------------------------------
+   Instrument modules (2026-11-19): Invariant's own visual language — square,
+   hairline, corner brackets and a lit rule in the module's colour, readouts
+   that glow. Colour says what a thing IS; amber stays the platform's own.
+   Separate from the exploring_* sites' look on purpose.
+   --------------------------------------------------------------------------- */
+.module {
+  --accent: var(--amber);
+  position: relative;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 65%),
+    var(--background-deep);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.module::before {
+  content: ""; position: absolute; left: -1px; top: 12px; bottom: 12px; width: 3px;
+  background: var(--accent); box-shadow: 0 0 12px var(--accent);
+}
+.module::after {
+  content: ""; position: absolute; inset: -1px; pointer-events: none;
+  --c: var(--accent);
+  background:
+    linear-gradient(var(--c), var(--c)) top left / 12px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top left / 2px 12px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 12px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 2px 12px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 12px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 2px 12px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 12px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 2px 12px no-repeat;
+}
+.module-tag { position: absolute; top: -22px; left: 14px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
+.readout { color: var(--accent); text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 60%, transparent); }
+.icon-cell { color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); }
+.icon-cell svg { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 70%, transparent)); }
+.led {
+  display: inline-block; width: 13px; height: 13px; border-radius: 2px;
+  background: linear-gradient(var(--accent), color-mix(in srgb, var(--accent) 62%, transparent));
+  box-shadow: 0 0 7px color-mix(in srgb, var(--accent) 55%, transparent);
+  animation: led-in .35s ease-out backwards;
+}
+@keyframes led-in { from { opacity: 0; transform: scale(.4); } }
+.blueprint {
+  background-image:
+    linear-gradient(rgba(139, 147, 158, .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 147, 158, .06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.trace-pulse { stroke-dasharray: 14 1400; stroke-dashoffset: 14; animation: trace-pulse 3s cubic-bezier(.5, 0, .5, 1) infinite; }
+@keyframes trace-pulse { 0% { stroke-dashoffset: 14; stroke-opacity: 0; } 12% { stroke-opacity: 1; } 88% { stroke-opacity: 1; } 100% { stroke-dashoffset: -660; stroke-opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .led, .trace-pulse { animation: none; } .trace-pulse { display: none; } }

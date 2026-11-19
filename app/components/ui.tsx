@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HUES, Module, SectionIcon } from "./instrument";
 import { site } from "@/site.config";
 
 export const GitHubIcon = () => (
@@ -122,21 +123,20 @@ export function RowList({ name, rows }: { name: string; rows: Row[] }) {
 /** Left-to-right flow of steps; gated steps carry the amber rule. Stacks on narrow screens. */
 export type Step = { title: string; body: string; gate?: boolean; planned?: boolean };
 export function Flow({ steps }: { steps: Step[] }) {
+  const hue = [5, 2, 0, 4, 1, 3];
   return (
-    <ol className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-5 gap-3 lg:gap-0">
+    <ol className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-5 gap-9 lg:gap-0 pt-6">
       {steps.map((s, i) => (
-        <li key={s.title} className={`relative border p-4 ${s.gate ? "border-amber-dark" : "border-hair-2"} ${s.planned ? "border-dashed" : ""} ${i > 0 ? "lg:ml-7 mt-2 lg:mt-0" : ""}`}>
+        <li key={s.title} className={`relative ${i > 0 ? "lg:ml-9" : ""}`}>
           {i > 0 && (
-            <span aria-hidden="true" className="absolute font-mono text-amber left-1/2 -top-[18px] -translate-x-1/2 lg:left-[-22px] lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-0">
+            <span aria-hidden="true" className="absolute font-mono text-amber left-1/2 -top-[30px] -translate-x-1/2 lg:left-[-30px] lg:top-1/2 lg:-translate-y-1/2 lg:translate-x-0 [text-shadow:0_0_10px_#f59e0b]">
               <span className="lg:hidden">↓</span><span className="hidden lg:inline">→</span>
             </span>
           )}
-          <span className="font-mono text-xs text-dim block mb-1">
-            {String(i + 1).padStart(2, "0")}
-            {s.planned && <span className="ml-2 text-amber">decided · not built</span>}
-          </span>
-          <span className="block text-[15px] font-semibold">{s.title}</span>
-          <span className="block mt-1 text-xs leading-snug text-muted">{s.body}</span>
+          <Module color={HUES[hue[i % hue.length]]} tag={`stage ${i + 1}${s.planned ? " · not built" : ""}${s.gate ? " · gate" : ""}`} className={`p-4 h-full ${s.planned ? "border-dashed" : ""}`}>
+            <span className="block text-[15px] font-semibold">{s.title}</span>
+            <span className="block mt-1.5 text-xs leading-snug text-muted">{s.body}</span>
+          </Module>
         </li>
       ))}
     </ol>
@@ -158,14 +158,14 @@ export function Scorecard({ cells }: { cells: { n: number | string; label: strin
 
 /** The home page's section index: a numbered, ruled table — not cards. */
 export function SectionIndex({ sections, note }: { sections: CardData[]; note: { title: string; body: string } }) {
-  const cols = "grid grid-cols-[minmax(0,1fr)] md:grid-cols-[48px_200px_minmax(0,1fr)_280px] gap-2 md:gap-6 items-start px-3 py-5 border-t border-hair";
+  const cols = "grid grid-cols-[minmax(0,1fr)] md:grid-cols-[56px_200px_minmax(0,1fr)_280px] gap-2 md:gap-6 items-start px-3 py-5 border-t border-hair";
   return (
     <div className="border-b border-hair">
       {sections.map((s) => {
         const [pub, mem] = (s.meta ?? "").split(" Members: ");
         return (
           <Link key={s.title} href={s.href ?? "#"} className={`${cols} text-foreground hover:bg-deep transition-colors`}>
-            <span className="font-mono text-[13px] text-amber pt-0.5">{sectionNumber(s.href ?? "")}</span>
+            <span className="flex md:flex-col items-center md:items-start gap-3"><SectionIcon href={s.href ?? ""} /><span className="font-mono text-[12px] text-dim">{sectionNumber(s.href ?? "")}</span></span>
             <span className="text-lg font-semibold tracking-[-0.01em]">{s.title}</span>
             <span className="text-sm leading-relaxed text-muted">{s.body}</span>
             <span className="font-mono text-xs leading-relaxed text-dim">
