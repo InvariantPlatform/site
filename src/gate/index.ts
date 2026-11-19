@@ -83,6 +83,11 @@ async function serveMembers(request: Request, url: URL, env: GateEnv, fetcher: F
 export async function gate(request: Request, env: GateEnv, url: URL, fetcher: Fetch = fetch, nowMs: number = Date.now()): Promise<Response | null> {
   const p = url.pathname;
   const isAuth = p.startsWith("/auth/");
+  // The site uses trailing slashes everywhere, so people type /join/apply/.
+  // 308, not 301: a POST keeps its method and body through the redirect.
+  if (p.endsWith("/") && (JOIN_PATHS.has(p.slice(0, -1)) || p.slice(0, -1) === WEBHOOK_PATH)) {
+    return new Response(null, { status: 308, headers: { location: `${p.slice(0, -1)}${url.search}`, "cache-control": "no-store" } });
+  }
   if (p === WEBHOOK_PATH) return buttondownWebhook(request, env, appConfig(env), fetcher, nowMs);
   if (JOIN_PATHS.has(p)) return join(request, env, url, appConfig(env), fetcher, nowMs);
   if (!isAuth && !isGated(p)) return null;

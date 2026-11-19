@@ -282,3 +282,12 @@ test("email shape checks", () => {
   assert.ok(isNoreply("12+x@users.noreply.github.com"));
   assert.ok(!isNoreply("x@github.com"));
 });
+
+test("the slashed join paths redirect to the real ones, keeping the method", async () => {
+  for (const [path, method] of [["/join/apply/", "GET"], ["/join/apply/", "POST"], ["/join/status/?x=1", "GET"]] as const) {
+    const url = new URL(path, ORIGIN);
+    const res = (await gate(new Request(url, { method }), ENV, url, fake().fetch, NOW))!;
+    assert.equal(res.status, 308, path);
+    assert.equal(res.headers.get("location"), path.replace("/?", "?").replace(/\/$/, ""));
+  }
+});
