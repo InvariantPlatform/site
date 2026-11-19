@@ -9,8 +9,9 @@
 //                                        a fall back to the old answer
 //   - any configuration missing        → 503
 // Members content is never in the static export or the public repository. It
-// is fetched from MEMBERS_ORIGIN (private, origin-locked) with a shared secret
-// header, and every gated or auth response is private, uncached and noindex.
+// is fetched from MEMBERS_ORIGIN (private, origin-locked) with a basic-auth
+// credential the origin's Traefik requires (user "gate", MEMBERS_ORIGIN_SECRET)
+// and every gated or auth response is private, uncached and noindex.
 // The join flow's two paths (/join/apply, /join/status) are routed from here
 // to join.ts, which shares this file's sign-in and fails closed the same way.
 
@@ -50,7 +51,7 @@ async function serveMembers(request: Request, url: URL, env: GateEnv, fetcher: F
   // A fresh request: the reader's cookies and headers stay here.
   const res = await fetcher(target.toString(), {
     method: request.method === "HEAD" ? "HEAD" : "GET",
-    headers: { "x-invariant-gate": env.MEMBERS_ORIGIN_SECRET, "user-agent": "invariant-platform-gate" },
+    headers: { authorization: `Basic ${btoa(`gate:${env.MEMBERS_ORIGIN_SECRET}`)}`, "user-agent": "invariant-platform-gate" },
     redirect: "manual",
   });
   const out = new Response(res.body, { status: res.status, headers: privateHeaders(new Headers(res.headers)) });

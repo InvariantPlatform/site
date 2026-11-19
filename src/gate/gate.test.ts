@@ -165,7 +165,7 @@ test("sign-in → GitHub → callback → members content, end to end", async ()
   assert.equal(res.headers.get("set-cookie"), null, "the origin's cookies never reach the reader");
   const originCall = gh.calls.find((c) => c.url.startsWith("https://members-origin.example/"))!;
   const sent = new Headers(originCall.init!.headers);
-  assert.equal(sent.get("x-invariant-gate"), "origin-secret");
+  assert.equal(sent.get("authorization"), `Basic ${btoa("gate:origin-secret")}`);
   assert.equal(sent.get("cookie"), null, "the reader's cookies never reach the origin");
   assert.equal(gh.calls.filter((c) => c.url.includes("/user")).length, 1);
 });
