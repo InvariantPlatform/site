@@ -2,7 +2,7 @@ import type { Row } from "@/app/components/ui";
 
 export const intro = {
   title: "Security posture",
-  paragraphs: ["Eighteen properties the platform claims. Each one is re-asserted every night by a process that runs outside the cluster, as an identity that can only read, and pages when the property no longer holds. What follows is the list and what each line means. How each is enforced, and the incident that put it on the list, is for members."],
+  paragraphs: ["Nineteen properties the platform claims. Each one is re-asserted every night by a process that runs outside the cluster, as an identity that can only read, and pages when the property no longer holds. What follows is the list and what each line means. How each is enforced, and the incident that put it on the list, is for members."],
 };
 
 export const groups: { name: string; rows: Row[] }[] = [
@@ -14,7 +14,8 @@ export const groups: { name: string; rows: Row[] }[] = [
     { k: "No standing elevated access", v: "The operator holds no write access at rest; elevation is a recorded, self-expiring grant." },
     { k: "Configuration is reconciling", v: "Every part of the platform is applied from one source and pruned back to it." },
     { k: "The artifact is signed by one named workflow", v: "Verification can be removed without anything breaking. That is why it is checked." },
-    { k: "Secrets come from a manager, never from git", v: "Eight external secrets, all syncing." },
+    { k: "Secrets come from a manager, never from git", v: "Ten external secrets, all syncing." },
+    { k: "Every volume has a replica on every hypervisor", v: "Losing one host must not lose data. A volume that has drifted onto a single host is a finding, not a footnote." },
   ]},
   { name: "On the hosts beneath it", rows: [
     { k: "SELinux enforcing on this hypervisor", v: "No permissive domains, no custom modules. Found clean the day the check was written — which is why the check exists: nothing was watching for the drift." },
