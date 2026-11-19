@@ -33,7 +33,7 @@
     // members, write (read back 2026-11-12: no other permission, no events).
     "GITHUB_ORG": "InvariantPlatform",
     "GITHUB_APP_ID": "5726583",
-    "GITHUB_APP_CLIENT_ID": "Iv23liReufa92bz25es0",
+    "GITHUB_APP_CLIENT_ID": "Ov23li2Il0SOg0oDnfob",
     "GITHUB_APP_INSTALLATION_ID": "181205606",
     // Where members' pages come from: the on-cluster register (ADR-185),
     // Cloudflare-only at the edge and basic auth in the cluster. The gate
