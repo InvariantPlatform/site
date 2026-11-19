@@ -54,8 +54,24 @@ async function serveMembers(request: Request, url: URL, env: GateEnv, fetcher: F
     headers: { authorization: `Basic ${btoa(`gate:${env.MEMBERS_ORIGIN_SECRET}`)}`, "user-agent": "invariant-platform-gate" },
     redirect: "manual",
   });
+  // A 401/403/5xx from the origin is the gate's fault (wrong credential, origin
+  // down), never the reader's. Forwarding it would also forward a 401's
+  // WWW-Authenticate, and the browser would ask the READER for the origin's
+  // password. Say "unavailable" instead, with none of the origin's headers.
+  if (res.status === 401 || res.status === 403 || res.status >= 500) {
+    await res.body?.cancel();
+    return page(502, "Members pages unavailable", "<p>The members pages could not be fetched just now, so nothing is shown. Try again in a minute.</p>");
+  }
   const out = new Response(res.body, { status: res.status, headers: privateHeaders(new Headers(res.headers)) });
   out.headers.delete("set-cookie");
+  out.headers.delete("www-authenticate");
+  // A redirect (e.g. a missing trailing slash) must stay on this host: the
+  // origin's hostname is never handed to the reader.
+  const location = out.headers.get("location");
+  if (location) {
+    const l = new URL(location, target);
+    out.headers.set("location", l.origin === target.origin ? `${l.pathname}${l.search}` : "/members/");
+  }
   return out;
 }
 

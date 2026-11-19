@@ -33,7 +33,7 @@ const ENV: GateEnv = {
 interface Call { url: string; init?: RequestInit }
 
 /** A fake GitHub + origin. `membership` is the status /orgs/:org/members/:login answers. */
-function fakeGitHub(opts: { membership?: number; tokenStatus?: number } = {}): { fetch: Fetch; calls: Call[] } {
+function fakeGitHub(opts: { membership?: number; tokenStatus?: number; origin?: () => Response } = {}): { fetch: Fetch; calls: Call[] } {
   const calls: Call[] = [];
   const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
   const fetcher: Fetch = async (input, init) => {
@@ -48,6 +48,7 @@ function fakeGitHub(opts: { membership?: number; tokenStatus?: number } = {}): {
     }
     if (url === "https://api.github.com/orgs/InvariantPlatform/members/reader") return new Response(null, { status: opts.membership ?? 204 });
     if (url.startsWith("https://members-origin.example/")) {
+      if (opts.origin) return opts.origin();
       return new Response("<h1>members content</h1>", { status: 200, headers: { "content-type": "text/html", "set-cookie": "origin=leak" } });
     }
     throw new Error(`unexpected fetch ${url}`);
@@ -214,6 +215,34 @@ test("a member before the members site exists gets a plain 503, not a public pag
   const res = (await gate(r, { ...ENV, MEMBERS_ORIGIN: undefined }, u, fakeGitHub().fetch, NOW))!;
   assert.equal(res.status, 503);
   assert.match(await res.text(), /not published yet/);
+});
+
+test("an origin refusal is a plain 502: no password prompt, no origin headers", async () => {
+  for (const status of [401, 403, 500, 503]) {
+    const origin = () => new Response("Unauthorized", { status, headers: { "www-authenticate": 'Basic realm="traefik"', "x-origin": "leak" } });
+    const [r, u] = req("/members/", await sessionCookie(true));
+    const res = (await gate(r, ENV, u, fakeGitHub({ origin }).fetch, NOW))!;
+    assert.equal(res.status, 502, String(status));
+    assert.equal(res.headers.get("www-authenticate"), null);
+    assert.equal(res.headers.get("x-origin"), null);
+    assertPrivate(res);
+    assert.match(await res.text(), /could not be fetched/);
+  }
+});
+
+test("an origin redirect stays on this host", async () => {
+  const cases: [string, string][] = [
+    ["https://members-origin.example/members/decisions/", "/members/decisions/"],
+    ["/members/decisions/", "/members/decisions/"],
+    ["https://elsewhere.example/x", "/members/"],
+  ];
+  for (const [given, expected] of cases) {
+    const origin = () => new Response(null, { status: 301, headers: { location: given } });
+    const [r, u] = req("/members/decisions", await sessionCookie(true));
+    const res = (await gate(r, ENV, u, fakeGitHub({ origin }).fetch, NOW))!;
+    assert.equal(res.status, 301);
+    assert.equal(res.headers.get("location"), expected, given);
+  }
 });
 
 test("writes are refused", async () => {
