@@ -25,7 +25,7 @@ async function font(family: string, weight: number): Promise<ArrayBuffer> {
 
 export default async function Image() {
   const [mono, monoMedium, sans] = await Promise.all([font("Geist+Mono", 400), font("Geist+Mono", 500), font("Geist", 400)]);
-  const { decisions, invariants, rebuilds } = site.stats;
+  const { decisions, rebuilds } = site.stats;
 
   return new ImageResponse(
     (
@@ -57,10 +57,7 @@ export default async function Image() {
             <div style={{ width: 10, height: 10, backgroundColor: "#f59e0b", display: "flex" }} />
             <span>posture-check</span>
             <span style={{ color: "#4b5563" }}>·</span>
-            <span>
-              <span style={{ color: "#e8e8e8" }}>{`${invariants}\u00a0`}</span>
-              {`of ${invariants} invariants hold`}
-            </span>
+            <span>every invariant re-asserted</span>
             <span style={{ color: "#4b5563" }}>·</span>
             <span>nightly</span>
           </div>
@@ -96,11 +93,6 @@ export default async function Image() {
             <span>
               <span style={{ color: "#e8e8e8" }}>{`${decisions}\u00a0`}</span>
               decisions
-            </span>
-            <span style={{ color: "#4b5563" }}>·</span>
-            <span>
-              <span style={{ color: "#e8e8e8" }}>{`${invariants}\u00a0`}</span>
-              invariants
             </span>
             <span style={{ color: "#4b5563" }}>·</span>
             <span>

@@ -21,13 +21,18 @@ export function Module({ color = HUES[0], tag, className = "", children }: { col
   );
 }
 
-export function StatsBand({ stats }: { stats: { n: number; label: string; sub: string }[] }) {
+/** `live` names a `data-status` slot the Worker fills from the last run; the page ships "–" there, never a number that can go stale. */
+export function StatsBand({ stats }: { stats: { n: number | null; live?: string; label: string; sub: string }[] }) {
   const order = [0, 4, 1, 2, 3];
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-8">
       {stats.map((s, i) => (
         <Module key={s.label} color={HUES[order[i % order.length]]} className={`px-5 py-5 ${i === stats.length - 1 && stats.length % 2 ? "col-span-2 md:col-span-1" : ""}`}>
-          <span className="readout block font-mono text-4xl md:text-[44px] font-semibold leading-none tabular-nums">{s.n}</span>
+          {s.live ? (
+            <span className="readout block font-mono text-4xl md:text-[44px] font-semibold leading-none tabular-nums" data-status={s.live} dangerouslySetInnerHTML={{ __html: "–" }} />
+          ) : (
+            <span className="readout block font-mono text-4xl md:text-[44px] font-semibold leading-none tabular-nums">{s.n}</span>
+          )}
           <span className="block mt-3 label text-foreground">{s.label}</span>
           <span className="block mt-1 text-[13px] text-muted">{s.sub}</span>
         </Module>

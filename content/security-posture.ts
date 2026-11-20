@@ -2,7 +2,7 @@ import type { Row } from "@/app/components/ui";
 
 export const intro = {
   title: "Security posture",
-  paragraphs: ["Nineteen properties the platform claims. Each one is re-asserted every night by a process that runs outside the cluster, as an identity that can only read, and pages when the property no longer holds. What follows is the list and what each line means. How each is enforced, and the incident that put it on the list, is for members."],
+  paragraphs: ["The properties the platform claims. Each one is re-asserted every night by a process that runs outside the cluster, as an identity that can only read, and pages when the property no longer holds. What follows is the list and what each line means. How each is enforced, and the incident that put it on the list, is for members."],
 };
 
 export const groups: { name: string; rows: Row[] }[] = [

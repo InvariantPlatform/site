@@ -6,7 +6,7 @@ export const site = {
   description:
     "A security-first Kubernetes platform that re-asserts its own security posture every night, from outside itself, and whose only repair is a rebuild from a declaration.",
   author: { name: "Brad Penney", url: "https://www.bradpenney.io" },
-  stats: { decisions: 210, invariants: 19, rebuilds: 7, restoreDrills: 2, failureDomains: 2 },
+  stats: { decisions: 210, rebuilds: 7, restoreDrills: 2, failureDomains: 2 },
   // The register's categories, with the count of decisions in each. Generated
   // from the register's index; a category's count moves when a decision lands.
   register: [
@@ -35,4 +35,5 @@ export const site = {
   ],
 } as const;
 
-export const statsLine = `${site.stats.decisions} decisions · ${site.stats.invariants} invariants · ${site.stats.rebuilds} rebuilds`;
+// The invariant count is not here: it comes from the last run, filled in by the Worker (bug-231).
+

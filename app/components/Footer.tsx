@@ -1,4 +1,4 @@
-import { site, statsLine } from "@/site.config";
+import { site } from "@/site.config";
 
 export default function Footer() {
   return (
@@ -8,7 +8,9 @@ export default function Footer() {
           Built and run by <a href={site.author.url} className="text-muted hover:text-foreground">{site.author.name}</a>. Every decision on this site has a number in a register.{" "}
           <a href="/privacy/" className="text-muted hover:text-foreground">Privacy</a> · <a href="/auth/login?next=/members/" className="text-muted hover:text-foreground">Member sign-in</a>
         </span>
-        <span>{statsLine}</span>
+        <span>
+          {site.stats.decisions} decisions · <span data-status="invariants" dangerouslySetInnerHTML={{ __html: "–" }} /> invariants · {site.stats.rebuilds} rebuilds
+        </span>
       </div>
       <p className="max-w-7xl mx-auto px-6 pb-6 font-mono text-xs text-dim">
         <i lang="la">Quis custodiet ipsos custodes?</i> Who will guard the guards? Inspired by Juvenal, <cite className="not-italic">Satires</cite> VI.

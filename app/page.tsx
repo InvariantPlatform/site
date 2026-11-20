@@ -39,7 +39,7 @@ export default function Home() {
         <SectionHead title="The numbers the platform keeps" sub="each one is counted, not estimated" />
         <StatsBand stats={[
           { n: site.stats.decisions, label: "decisions", sub: "numbered, never deleted" },
-          { n: site.stats.invariants, label: "invariants", sub: "re-asserted nightly" },
+          { n: null, live: "invariants", label: "invariants", sub: "re-asserted nightly" },
           { n: site.stats.rebuilds, label: "rebuilds", sub: "from a declaration" },
           { n: site.stats.restoreDrills, label: "restore drills", sub: "passed, not assumed" },
           { n: site.stats.failureDomains, label: "failure domains", sub: "and what survives each" },
