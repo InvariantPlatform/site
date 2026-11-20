@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Topology and capacity",
+    "n": 20
+  },
+  {
+    "name": "Provisioning, roll and rebuild",
+    "n": 26
+  },
+  {
+    "name": "Networking and DNS",
+    "n": 21
+  },
+  {
+    "name": "Security and admission",
+    "n": 24
+  },
+  {
+    "name": "Secrets and identity",
+    "n": 8
+  },
+  {
+    "name": "Supply chain and releases",
+    "n": 18
+  },
+  {
+    "name": "GitOps and config delivery",
+    "n": 9
+  },
+  {
+    "name": "Storage, backup and disaster recovery",
+    "n": 18
+  },
+  {
+    "name": "Observability and alerting",
+    "n": 26
+  },
+  {
+    "name": "Workloads and migrations",
+    "n": 10
+  },
+  {
+    "name": "Engineering practice",
+    "n": 26
+  },
+  {
+    "name": "Site and funnel",
+    "n": 5
+  }
+]
