@@ -84,7 +84,7 @@ export function JoinCta() {
     <div className="flex flex-col items-start gap-2.5">
       <Link href="/join/" className="btn btn-solid"><GitHubIcon /> Join with GitHub</Link>
       <span className="font-mono text-xs text-dim">
-        {site.joinOpen ? "Free. An organization invitation and your email." : "Free, when it opens. An invitation and your email."}
+        {site.joinOpen ? "Free. The source, the field notes and the register." : "Free, when it opens. The source, the field notes and the register."}
       </span>
     </div>
   );

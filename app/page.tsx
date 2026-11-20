@@ -26,6 +26,7 @@ export default function Home() {
                 <Link href="/security-posture/" className="btn btn-solid">Read the security posture →</Link>
                 <Link href="/architecture/" className="btn">How it is built →</Link>
               </div>
+              <Link href="/join/" className="font-mono text-[13px] text-amber-light hover:text-amber w-fit">Free membership includes the source →</Link>
               <HeartbeatTrace />
             </div>
             <Module className="px-5 pt-2 pb-4 mt-6 md:mt-0">

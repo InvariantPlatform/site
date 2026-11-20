@@ -52,6 +52,6 @@ export const register = {
 };
 
 export const offer = {
-  title: "The whole story is free. It just isn't anonymous.",
-  body: "Join the GitHub organization and leave an email address. That unlocks every members-only route on this site. No cost, no seat count, no card, and you can leave whenever you like.",
+  title: "The source is free. It just isn't anonymous.",
+  body: "Members read the platform's code in its GitHub organization: the provisioner that builds, rolls and rebuilds the cluster, and every check it runs. With it come the field notes, the decision register and the architecture views. Join the organization and leave an email address. No cost, no seat count, no card, and you can leave whenever you like.",
 };
