@@ -4,7 +4,7 @@ import Terminal from "./components/Terminal";
 import { Band, Flow, JoinCta, SectionHead, SectionIndex, Wrap } from "./components/ui";
 import { HeartbeatTrace, Module, RegisterMatrix, StatsBand } from "./components/instrument";
 import { flow, shape } from "@/content/supply-chain";
-import { hero, offer, postureRun, register, sections, threeRepos } from "@/content/home";
+import { hero, offer, postureRun, register, sections } from "@/content/home";
 import { site } from "@/site.config";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -16,7 +16,7 @@ export default function Home() {
         <Wrap>
           <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-[7fr_6fr] gap-10 md:gap-[72px] items-start">
             <div className="flex flex-col gap-7">
-              <span className="label text-dim">00&nbsp;&nbsp;Thesis</span>
+              <span className="label text-dim">Thesis</span>
               <h1 className="font-mono text-[30px] md:text-[38px] font-medium leading-[1.15] tracking-[-0.02em]">
                 {hero.titleBefore} <span className="text-amber">{hero.titleAccent}</span> {hero.titleAfter}
               </h1>
@@ -28,7 +28,7 @@ export default function Home() {
               </div>
               <HeartbeatTrace />
             </div>
-            <Module tag="CH-01 · posture · nightly" className="px-5 pt-2 pb-4 mt-6 md:mt-0">
+            <Module className="px-5 pt-2 pb-4 mt-6 md:mt-0">
               <Terminal {...postureRun} />
             </Module>
           </div>
@@ -48,7 +48,7 @@ export default function Home() {
 
       <Band>
         <SectionHead title="What holds, and how you can tell" sub="each section: what is public / what is for members" />
-        <SectionIndex sections={sections} note={threeRepos} />
+        <SectionIndex sections={sections} />
       </Band>
 
       <Band>

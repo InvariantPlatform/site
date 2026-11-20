@@ -77,6 +77,17 @@ async function serveMembers(request: Request, url: URL, env: GateEnv, fetcher: F
 }
 
 /**
+ * True only for a valid, unexpired session that says "member". Used to label
+ * the public header's button; it opens nothing, so the session's own
+ * membership answer is enough: /members/ re-checks GitHub on the way in.
+ */
+export async function isSignedInMember(request: Request, env: GateEnv, nowMs: number = Date.now()): Promise<boolean> {
+  if (!env.SESSION_SECRET) return false;
+  const session = await unseal<Session>(readCookie(request, SESSION_COOKIE), env.SESSION_SECRET, Math.floor(nowMs / 1000));
+  return session?.member === true;
+}
+
+/**
  * Answer the request if it belongs to the gate (gated or /auth/ paths);
  * null means "not mine", and the caller serves the public site as before.
  */

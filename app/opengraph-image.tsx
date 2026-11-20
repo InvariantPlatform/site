@@ -8,7 +8,7 @@ import { site } from "@/site.config";
 // does not.
 
 export const dynamic = "force-static";
-export const alt = `${site.name} — a control you cannot verify is not a control`;
+export const alt = `${site.name}: a security posture that proves itself`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -69,13 +69,13 @@ export default async function Image() {
         {/* thesis */}
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ display: "flex", flexDirection: "column", fontSize: 66, fontWeight: 500, lineHeight: 1.12, letterSpacing: -1.5 }}>
-            <span>A control you cannot</span>
+            <span>A security posture that</span>
             <span>
-              <span style={{ color: "#f59e0b" }}>verify&nbsp;</span>is not a control.
+              <span style={{ color: "#f59e0b" }}>proves&nbsp;</span>itself.
             </span>
           </div>
           <div style={{ fontFamily: "Geist", fontSize: 24, lineHeight: 1.45, color: "#9ca3af", maxWidth: 900 }}>
-            A small, security-first Kubernetes platform that re-asserts its own posture every night, from outside
+            A security-first Kubernetes platform that re-asserts its own security posture every night, from outside
             itself. Every property it claims is one it checks.
           </div>
         </div>

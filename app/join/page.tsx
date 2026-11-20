@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Join", description: intro.paragraphs
 export default function Page() {
   return (
     <>
-      <Intro number="06" {...intro} />
+      <Intro {...intro} />
       <section className="py-8">
         <Wrap>
           <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-8 md:gap-16 items-start">

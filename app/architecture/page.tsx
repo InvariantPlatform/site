@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import ContextView from "../components/ContextView";
 import ContextViewPhone from "../components/ContextViewPhone";
-import { Band, CardGrid, Intro, MembersStrip, SectionHead, sectionNumber } from "../components/ui";
+import { Band, CardGrid, Intro, MembersStrip, SectionHead } from "../components/ui";
 import { contextView, intro, members, principles } from "@/content/architecture";
 
 export const metadata: Metadata = { title: "Architecture", description: intro.rule, alternates: { canonical: "/architecture/" } };
@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Architecture", description: intro.ru
 export default function Page() {
   return (
     <>
-      <Intro number={sectionNumber("/architecture/")} {...intro} />
+      <Intro {...intro} />
       <Band>
         <SectionHead title={contextView.name} sub={contextView.meta} />
         <div className="hidden md:block pt-4"><ContextView /></div>

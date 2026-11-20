@@ -13,7 +13,7 @@
 //      document older than STALE_AFTER_HOURS: the strip says that, in amber.
 
 import { terminalHtml, runSummary, type TermLine } from "../lib/terminal-html";
-import { gate, type GateEnv } from "./gate/index.ts";
+import { gate, isSignedInMember, type GateEnv } from "./gate/index.ts";
 
 interface Env extends GateEnv {
   ASSETS: Fetcher;
@@ -118,7 +118,7 @@ async function readPosture(env: Env): Promise<Posture | null> {
   }
 }
 
-function fillStatus(html: Response, d: ReturnType<typeof describe>): Response {
+function fillStatus(html: Response, d: ReturnType<typeof describe>, member: boolean): Response {
   const text = (value: string) => ({ element(el: Element) { el.setInnerContent(value); } });
   const show = { element(el: Element) { el.removeAttribute("hidden"); } };
   let rw = new HTMLRewriter()
@@ -138,6 +138,9 @@ function fillStatus(html: Response, d: ReturnType<typeof describe>): Response {
       .on('[data-status="terminal"]', { element(el) { el.setInnerContent(t.html, { html: true }); } })
       .on('[data-status="terminal-title"]', text(t.title))
       .on('[data-status="terminal-caption"]', text(t.caption));
+  }
+  if (member) {
+    rw = rw.on('[data-member="cta"]', { element(el) { el.setAttribute("href", "/members/"); el.setInnerContent("Members"); } });
   }
   return rw.transform(html);
 }
@@ -174,9 +177,17 @@ const worker = {
       png.headers.set("content-type", "image/png");
       return canonical && !preview ? withHsts(png) : png;
     }
-    const res = (asset.headers.get("content-type") ?? "").includes("text/html")
-      ? fillStatus(asset, describe(await readPosture(env), new Date()))
-      : asset;
+    let res = asset;
+    if ((asset.headers.get("content-type") ?? "").includes("text/html")) {
+      const member = await isSignedInMember(request, env);
+      res = fillStatus(asset, describe(await readPosture(env), new Date()), member);
+      // The header now depends on who is asking: no shared cache may keep it.
+      if (member) {
+        res = new Response(res.body, res);
+        res.headers.set("cache-control", "private, no-store");
+        res.headers.set("vary", "cookie");
+      }
+    }
     return canonical && !preview ? withHsts(res) : res;
   },
 };

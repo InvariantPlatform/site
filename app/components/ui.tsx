@@ -16,18 +16,11 @@ export const Band = ({ children }: { children: React.ReactNode }) => (
   <section className="py-8"><Wrap>{children}</Wrap></section>
 );
 
-/** The section's number in the nav, as "02" — the instrument numbers everything. */
-export function sectionNumber(href: string): string {
-  const i = site.nav.findIndex((n) => n.href === href);
-  return i < 0 ? "00" : String(i + 1).padStart(2, "0");
-}
-
-/** Page opener: numbered label, mono H1, lede paragraphs, optional one-line rule. */
-export function Intro({ number, title, paragraphs, rule }: { number: string; title: string; paragraphs: string[]; rule?: string }) {
+/** Page opener: mono H1, lede paragraphs, optional one-line rule. */
+export function Intro({ title, paragraphs, rule }: { title: string; paragraphs: string[]; rule?: string }) {
   return (
     <section className="pt-14 md:pt-20 pb-4">
       <Wrap>
-        <span className="label text-dim block mb-6">{number}&nbsp;&nbsp;{title}</span>
         <h1 className="font-mono text-[30px] md:text-[38px] font-medium leading-[1.15] tracking-[-0.02em]">{title}</h1>
         {paragraphs.map((p) => (
           <p key={p.slice(0, 32)} className="mt-5 text-[17px] leading-relaxed text-muted max-w-[46em]">{p}</p>
@@ -106,9 +99,8 @@ export function RowList({ name, rows }: { name: string; rows: Row[] }) {
         <span className="label text-muted font-medium">{name}</span>
         <span className="font-mono text-xs text-dim">{rows.length}</span>
       </div>
-      {rows.map((r, i) => (
-        <div key={r.k} className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-[40px_2fr_3fr] gap-1.5 md:gap-6 py-3.5 border-b border-hair">
-          <span className="font-mono text-xs text-dim pt-1">{String(i + 1).padStart(2, "0")}</span>
+      {rows.map((r) => (
+        <div key={r.k} className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-[2fr_3fr] gap-1.5 md:gap-6 py-3.5 border-b border-hair">
           <span className="text-[15px]">
             {r.failed && <span className="font-mono text-[11px] text-background bg-amber px-1 mr-2 align-middle font-medium">FAIL</span>}
             {r.k}
@@ -157,7 +149,7 @@ export function Scorecard({ cells }: { cells: { n: number | string; label: strin
 }
 
 /** The home page's section index: a numbered, ruled table — not cards. */
-export function SectionIndex({ sections, note }: { sections: CardData[]; note: { title: string; body: string } }) {
+export function SectionIndex({ sections }: { sections: CardData[] }) {
   const cols = "grid grid-cols-[minmax(0,1fr)] md:grid-cols-[56px_200px_minmax(0,1fr)_280px] gap-2 md:gap-6 items-start px-3 py-5 border-t border-hair";
   return (
     <div className="border-b border-hair">
@@ -165,7 +157,7 @@ export function SectionIndex({ sections, note }: { sections: CardData[]; note: {
         const [pub, mem] = (s.meta ?? "").split(" Members: ");
         return (
           <Link key={s.title} href={s.href ?? "#"} className={`${cols} text-foreground hover:bg-deep transition-colors`}>
-            <span className="flex md:flex-col items-center md:items-start gap-3"><SectionIcon href={s.href ?? ""} /><span className="font-mono text-[12px] text-dim">{sectionNumber(s.href ?? "")}</span></span>
+            <span className="flex md:flex-col items-center md:items-start gap-3"><SectionIcon href={s.href ?? ""} /></span>
             <span className="text-lg font-semibold tracking-[-0.01em]">{s.title}</span>
             <span className="text-sm leading-relaxed text-muted">{s.body}</span>
             <span className="font-mono text-xs leading-relaxed text-dim">
@@ -175,11 +167,6 @@ export function SectionIndex({ sections, note }: { sections: CardData[]; note: {
           </Link>
         );
       })}
-      <div className={cols}>
-        <span className="font-mono text-[13px] text-dim pt-0.5">—</span>
-        <span className="text-[15px] text-foreground/80">{note.title}</span>
-        <span className="text-sm leading-relaxed text-muted md:col-span-2">{note.body}</span>
-      </div>
     </div>
   );
 }
@@ -189,9 +176,8 @@ export function Register({ categories }: { categories: readonly { name: string; 
   const total = categories.reduce((a, c) => a + c.n, 0);
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 md:gap-x-12 border-t border-hair">
-      {categories.map((c, i) => (
-        <div key={c.name} className="grid grid-cols-[40px_minmax(0,1fr)_auto] gap-4 items-baseline py-3 border-b border-hair">
-          <span className="font-mono text-xs text-dim">{String(i + 1).padStart(2, "0")}</span>
+      {categories.map((c) => (
+        <div key={c.name} className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-baseline py-3 border-b border-hair">
           <span className="text-[15px]">{c.name}</span>
           <span className="font-mono text-sm text-muted tabular-nums">{c.n}</span>
         </div>

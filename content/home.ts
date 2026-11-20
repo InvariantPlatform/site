@@ -2,11 +2,11 @@ import type { CardData } from "@/app/components/ui";
 import type { TermLine } from "@/app/components/Terminal";
 
 export const hero = {
-  titleBefore: "A control you cannot",
-  titleAccent: "verify",
-  titleAfter: "is not a control.",
-  lede: "Invariant Platform is a small, security-first Kubernetes platform that re-asserts its own posture every night, from outside itself, and whose only repair is a rebuild from a declaration. Every property it claims is one it checks.",
-  body: "It runs on two hypervisors in a house in Nova Scotia. That is not the point. The point is that a property asserted in a document is not a property until something outside the system checks it, on a schedule, and pages when it stops being true.",
+  titleBefore: "A security posture that",
+  titleAccent: "proves",
+  titleAfter: "itself.",
+  lede: "Invariant Platform is a security-first Kubernetes platform that re-asserts its own security posture every night, from outside itself, and whose only repair is a rebuild from a declaration. Every property it claims is one it checks.",
+  body: "The checks ask the cluster's own API and compare the answer with the declaration, not with a list of machines, so they ask the same questions of five nodes as of a thousand. The estate it runs on today is the proving ground, not the limit.",
 };
 
 // A real run, kept with its finding on purpose. Replace with a newer run, never with a cleaner one.
@@ -49,11 +49,6 @@ export const register = {
   sub: "twelve categories · every entry numbered · nothing deleted",
   body: "Every choice that shaped the platform is written down before it is built, numbered, and filed under one of twelve categories. A decision that turned out wrong is not deleted; it is superseded by a later number that says why. Most of them record a property that was asserted and, more often than not, did not hold the first time it was checked — which is the point of writing them down.",
   aside: "Members read the decisions. The public page shows their shape, so the count on the strip is a count of something you can see.",
-};
-
-export const threeRepos = {
-  title: "Where the code lives, and who owns it",
-  body: "Three repositories. The platform team owns two: one builds the machines and the cluster; one holds the configuration that reconciles onto it. Every application is a tenant in a third, owned by whoever wrote it, reconciled under an identity that cannot touch anything it was not given. The platform never owns an app; an app never owns the platform. That separation is the pattern this whole site argues for.",
 };
 
 export const offer = {

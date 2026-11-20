@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Band, CardGrid, Flow, Intro, MembersStrip, RowList, SectionHead, sectionNumber } from "../components/ui";
+import { Band, CardGrid, Flow, Intro, MembersStrip, RowList, SectionHead } from "../components/ui";
 import { flow, intro, members, pins, release, repoCards, repos, shape } from "@/content/supply-chain";
 
 export const metadata: Metadata = { title: "Supply chain", description: intro.rule, alternates: { canonical: "/supply-chain/" } };
@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Supply chain", description: intro.ru
 export default function Page() {
   return (
     <>
-      <Intro number={sectionNumber("/supply-chain/")} {...intro} />
+      <Intro {...intro} />
       <Band><SectionHead {...shape} /><Flow steps={flow} /></Band>
       <Band><SectionHead {...repos} /><CardGrid cards={repoCards} /></Band>
       <Band>

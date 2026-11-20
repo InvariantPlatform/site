@@ -65,11 +65,10 @@ export function RegisterMatrix({ categories }: { categories: readonly { name: st
   return (
     <div className="flex flex-col gap-3">
       {categories.map((c, i) => (
-        <div key={c.name} className="grid grid-cols-[28px_minmax(0,1fr)_36px] md:grid-cols-[28px_260px_36px_minmax(0,1fr)] gap-x-3 gap-y-2 items-center" style={accent(HUES[i % HUES.length])}>
-          <span className="font-mono text-xs readout">{String(i + 1).padStart(2, "0")}</span>
+        <div key={c.name} className="grid grid-cols-[minmax(0,1fr)_36px] md:grid-cols-[260px_36px_minmax(0,1fr)] gap-x-3 gap-y-2 items-center" style={accent(HUES[i % HUES.length])}>
           <span className="text-[14px] text-foreground/90">{c.name}</span>
           <span className="font-mono text-xs text-muted tabular-nums text-right">{c.n}</span>
-          <span className="col-span-3 md:col-span-1 flex flex-wrap gap-[5px]" aria-hidden="true">
+          <span className="col-span-2 md:col-span-1 flex flex-wrap gap-[5px]" aria-hidden="true">
             {Array.from({ length: c.n }, (_, j) => (
               <span key={j} className="led" style={{ animationDelay: `${(i * 0.05 + j * 0.012).toFixed(3)}s` }} />
             ))}

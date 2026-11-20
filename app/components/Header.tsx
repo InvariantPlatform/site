@@ -10,6 +10,10 @@ import { site } from "@/site.config";
  * (mark, JOIN, MENU) that folds the numbered sections out underneath as a
  * ruled list. The fold remembers which page it was opened on, so navigating
  * anywhere closes it without an effect.
+ *
+ * The Join button is a plain <a> with its label in dangerouslySetInnerHTML:
+ * the Worker turns it into "Members" for a signed-in member, and React must
+ * neither restore the text on hydration nor route the click client-side.
  */
 export default function Header() {
   const pathname = usePathname();
@@ -30,20 +34,16 @@ export default function Header() {
         </Link>
 
         <nav className="hidden md:flex flex-wrap items-center gap-x-7 gap-y-2" aria-label="Sections">
-          {site.nav.map((n, i) => (
+          {site.nav.map((n) => (
             <Link key={n.href} href={n.href} className={`navlink ${current(n.href) ? "navlink-current" : ""}`}>
-              <span className="text-dim">{String(i + 1).padStart(2, "0")}</span>&nbsp;{n.label}
+              {n.label}
             </Link>
           ))}
-          <Link href="/join/" className="label text-amber border border-amber-dark px-3.5 py-[7px] ml-2 hover:border-amber">
-            Join
-          </Link>
+          <a href="/join/" data-member="cta" className="label text-amber border border-amber-dark px-3.5 py-[7px] ml-2 hover:border-amber" dangerouslySetInnerHTML={{ __html: "Join" }} />
         </nav>
 
         <div className="flex md:hidden items-center gap-3">
-          <Link href="/join/" className="label text-amber border border-amber-dark px-3 py-[6px] hover:border-amber">
-            Join
-          </Link>
+          <a href="/join/" data-member="cta" className="label text-amber border border-amber-dark px-3 py-[6px] hover:border-amber" dangerouslySetInnerHTML={{ __html: "Join" }} />
           <button
             type="button"
             className="label text-muted border border-hair-2 px-3 py-[6px] hover:text-foreground"
@@ -57,14 +57,13 @@ export default function Header() {
       </div>
 
       <nav id="fold" hidden={!open} className="md:hidden border-t border-hair" aria-label="Sections">
-        {site.nav.map((n, i) => (
+        {site.nav.map((n) => (
           <Link
             key={n.href}
             href={n.href}
             className={`navlink flex items-baseline gap-4 px-6 py-3.5 border-b border-hair last:border-b-0 ${current(n.href) ? "navlink-current" : ""}`}
             onClick={() => setOpenOn(null)}
           >
-            <span className="text-dim">{String(i + 1).padStart(2, "0")}</span>
             {n.label}
           </Link>
         ))}

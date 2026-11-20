@@ -4,7 +4,7 @@ export const site = {
   name: "Invariant Platform",
   url: "https://invariant-platform.io",
   description:
-    "A small, security-first Kubernetes platform that re-asserts its own posture every night, from outside itself, and whose only repair is a rebuild from a declaration.",
+    "A security-first Kubernetes platform that re-asserts its own security posture every night, from outside itself, and whose only repair is a rebuild from a declaration.",
   author: { name: "Brad Penney", url: "https://www.bradpenney.io" },
   stats: { decisions: 210, invariants: 19, rebuilds: 7, restoreDrills: 2, failureDomains: 2 },
   // The register's categories, with the count of decisions in each. Generated
