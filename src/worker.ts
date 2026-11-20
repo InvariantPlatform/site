@@ -94,7 +94,7 @@ function describe(p: Posture | null, now: Date): { state: State; ranAt: string; 
         // architecture views are checked for before publication.
         title: `${formatRanAt(p.ran_at)} · from the host tier · read-only identity`,
         caption: p.findings.length === 0
-          ? "The most recent run, published by the host that ran it. A check that only ever says ok is not a check — this one can say FAIL, and has."
+          ? "The most recent run, published by the host that ran it. A check that only ever says ok is not a check; this one can say FAIL, and has."
           : "The most recent run, published by the host that ran it, findings included. A check that only ever says ok is not a check.",
       }
     : undefined;
@@ -104,7 +104,7 @@ function describe(p: Posture | null, now: Date): { state: State; ranAt: string; 
   if (age > STALE_AFTER_HOURS) {
     const days = Math.floor(age / 24);
     const since = days >= 1 ? `${days} day${days === 1 ? "" : "s"}` : `${Math.floor(age)} h`;
-    return { state: "stale", ranAt: formatRanAt(p.ran_at), findings: `stale — no run for ${since}`, provisioner: p.provisioner || "–", held: p.held, invariants: p.invariants, terminal };
+    return { state: "stale", ranAt: formatRanAt(p.ran_at), findings: `stale: no run for ${since}`, provisioner: p.provisioner || "–", held: p.held, invariants: p.invariants, terminal };
   }
   return { state: n === 0 ? "ok" : "finding", ranAt: formatRanAt(p.ran_at), findings: findingsText, provisioner: p.provisioner || "–", held: p.held, invariants: p.invariants, terminal };
 }

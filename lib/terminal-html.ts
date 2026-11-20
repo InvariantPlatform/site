@@ -29,5 +29,5 @@ export function terminalHtml(lines: TermLine[], summary: string): string {
 /** The summary line under a published run, in the strip's own words. */
 export function runSummary(held: number, invariants: number, findings: number): string {
   const tail = findings === 0 ? "no findings" : findings === 1 ? "1 finding, paged" : `${findings} findings, paged`;
-  return `${held} of ${invariants} invariants hold — ${tail}`;
+  return `${held} of ${invariants} invariants hold · ${tail}`;
 }

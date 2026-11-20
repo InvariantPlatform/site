@@ -33,7 +33,7 @@ export default function Page() {
                 <i className="mt-[3px] w-4 h-4 shrink-0 border border-hair-2" />
                 <span>{consent}</span>
               </label>
-              <span className="btn btn-soon"><GitHubIcon /> Continue with GitHub — opens with the members launch</span>
+              <span className="btn btn-soon"><GitHubIcon /> Continue with GitHub · opens with the members launch</span>
               <span className="font-mono text-xs text-muted">{after}</span>
             </div>
             )}

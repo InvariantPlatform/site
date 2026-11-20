@@ -30,7 +30,7 @@ export const postureRun = {
     { status: "ok", text: "peer: update service inactive, gates armed" },
     { status: "FAIL", text: "systemd degraded; unit not on the watch list: ddns-notify" },
   ] satisfies TermLine[],
-  summary: "14 of 15 invariants hold — 1 finding, paged",
+  summary: "14 of 15 invariants hold · 1 finding, paged",
   caption: "A run with a finding, kept on purpose. A check that only ever says ok is not a check.",
 };
 
@@ -39,7 +39,7 @@ export const sections: CardData[] = [
   { title: "Security posture", href: "/security-posture/", body: "Every invariant, re-asserted nightly from outside the cluster. Failure pages. Silence is the known gap, and it is written down as one.", meta: "Public: each invariant, and what it asserts. Members: how each is enforced, and the incident that created it." },
   { title: "Resiliency", href: "/resiliency/", body: "There is no repair path. Anything broken is destroyed and rebuilt from a declaration, and every rebuild is measured against the last one.", meta: "Public: the principle and the scorecard. Members: seven rebuilds, three failures, what each one taught." },
   { title: "Observability", href: "/observability/", body: "Metrics, logs and alert rules live beside the cluster, not in it. A monitor inside the thing it monitors cannot report that the thing is gone.", meta: "Public: the rule and the shape. Members: the dashboards, the alert rules, and the alerting gap." },
-  { title: "Supply chain", href: "/supply-chain/", body: "Nothing reaches the cluster except a signed artifact from one named workflow. Pushing to git deploys nothing; that is the point.", meta: "Public: the flow, and the three repositories. Members: the verification chain end to end, and the tenant boundary." },
+  { title: "Supply chain", href: "/supply-chain/", body: "Nothing reaches the cluster except a signed artifact from one named workflow. Pushing to git deploys nothing; only the signed artifact does.", meta: "Public: the flow, and the three repositories. Members: the verification chain end to end, and the tenant boundary." },
 ];
 
 // The register: every decision the platform has taken has a number, a category,
@@ -47,7 +47,7 @@ export const sections: CardData[] = [
 export const register = {
   title: "The decision register",
   sub: "twelve categories · every entry numbered · nothing deleted",
-  body: "Every choice that shaped the platform is written down before it is built, numbered, and filed under one of twelve categories. A decision that turned out wrong is not deleted; it is superseded by a later number that says why. Most of them record a property that was asserted and, more often than not, did not hold the first time it was checked — which is the point of writing them down.",
+  body: "Every choice that shaped the platform is written down before it is built, numbered, and filed under one of twelve categories. A decision that turned out wrong is not deleted; it is superseded by a later number that says why. Many record a property that was asserted and did not hold the first time it was checked; writing them down is how that stays visible.",
   aside: "Members read the decisions. The public page shows their shape, so the count on the strip is a count of something you can see.",
 };
 

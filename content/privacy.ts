@@ -8,7 +8,7 @@ export const updated = "2026-11-19";
 export const intro = {
   title: "Privacy",
   paragraphs: [
-    "Invariant Platform is one person's infrastructure, not a service with users. This page says exactly what it collects, and why.",
+    "Invariant Platform is run by one person and has no customers to profile. This page says what it collects, and why.",
   ],
 };
 

@@ -18,13 +18,13 @@ export const groups: { name: string; rows: Row[] }[] = [
     { k: "Every volume has a replica on every hypervisor", v: "Losing one host must not lose data. A volume that has drifted onto a single host is a finding, not a footnote." },
   ]},
   { name: "On the hosts beneath it", rows: [
-    { k: "SELinux enforcing on this hypervisor", v: "No permissive domains, no custom modules. Found clean the day the check was written — which is why the check exists: nothing was watching for the drift." },
+    { k: "SELinux enforcing on this hypervisor", v: "No permissive domains, no custom modules. Found clean the day the check was written. The check exists because, until then, nothing was watching for drift." },
     { k: "SELinux enforcing on every peer", v: "The same question asked of each other hypervisor over the wire. One line per peer; a peer that cannot be asked is reported as such, not counted." },
     { k: "No failed units on the watch list", v: "Nine units that must be healthy for the platform to be trustworthy, named in the tool, not discovered at run time." },
     { k: "Every peer's update service is idle and gated", v: "Nightly patching on one host defers to the others rather than colliding with them." },
   ]},
   { name: "At the edge", rows: [
-    { k: "The public site answers through the edge", v: "Resolved by a public resolver, not the host's — a lesson from the week split-horizon made this line lie." },
+    { k: "The public site answers through the edge", v: "Resolved by a public resolver, not the host's own: for a week, split-horizon DNS had this line measuring the LAN instead of the edge." },
     { k: "A direct hit on the origin is refused", v: "The one finding in the whole list that would mean someone bypassed the edge." },
     { k: "Restricted ports refuse non-listed sources", v: "Probed from a source that must be denied, then from one that must be allowed." },
   ]},
@@ -38,16 +38,16 @@ export const groups: { name: string; rows: Row[] }[] = [
 // it is a finding, and the count on the strip says so.
 export const failOnly = {
   title: "And one line that exists only to fail",
-  body: "A failed unit that is not on the watch list is still a failed unit. If the host's service manager reports itself degraded, the run fails and names the unit — there is no held version of this line, so it is never counted, and a run with no findings has proven it was not needed.",
+  body: "A failed unit that is not on the watch list is still a failed unit. If the host's service manager reports itself degraded, the run fails and names the unit. This line has no passing form: it is never counted, and it appears only when something has failed.",
 };
 
 export const why = [
-  { title: "Why it runs from outside", body: "A control that runs inside what it is checking cannot report that the thing is gone. The check runs on the hypervisors as a timer, with a read-only identity, and pages on failure. What it cannot yet do is page on its own silence — that gap is named, not hidden." },
+  { title: "Why it runs from outside", body: "A control that runs inside what it is checking cannot report that the thing is gone. The check runs on the hypervisors as a timer, with a read-only identity, and pages on failure. What it cannot yet do is page on its own silence, and that gap is written down." },
   { title: "Why the output is the interface", body: "The check reports what is wrong, never that it ran. A clean exit with no findings is distinguishable from a broken run, and a run that could not see something fails loudly instead of passing quietly." },
-  { title: "Why \"not checked\" is not \"held\"", body: "For a while, a peer that could not be reached was filed as an invariant that held, and the count went up when the check could see less. That is fixed: a thing not asserted is printed as information and counted as nothing. The number on the strip is the number of properties actually asserted that morning — no more, and on a bad morning, fewer." },
+  { title: "Why \"not checked\" is not \"held\"", body: "For a while, a peer that could not be reached was filed as an invariant that held, and the count went up when the check could see less. That is fixed: a thing not asserted is printed as information and counted as nothing. The number on the strip is the number of properties actually asserted that morning: never more, and on a bad morning, fewer." },
 ];
 
 export const members = {
   title: "For members: how each line is enforced, and what it cost to learn",
-  body: "The nightly output, verbatim, every night. The mechanism behind each invariant. The incident that put it on the list — the placement gate that passed while both nameservers sat on one node, the backup that mirrored an empty directory for months, the config that was unparseable for fourteen hours while every status said fine.",
+  body: "The nightly output, verbatim, every night. The mechanism behind each invariant. The incident that put it on the list: the placement gate that passed while both nameservers sat on one node, the backup that mirrored an empty directory for months, the config that was unparseable for fourteen hours while every status said fine.",
 };

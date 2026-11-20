@@ -12,8 +12,9 @@ export const site = {
   // private index by scripts/register-shape.mjs (rerun when a decision lands).
   // stats.decisions above is their sum, so the two cannot disagree.
   register,
-  // Prototype: the members mechanism (organization join + email) is not built.
-  // Flip when it is; every Join CTA reads this.
+  // The join flow is built and live behind this flag. It stays false until the
+  // soft opening (a full sign-up and unsubscribe test first); every Join CTA
+  // reads it, and the join page says "not open yet" while it is false.
   joinOpen: false,
   nav: [
     { href: "/architecture/", label: "Architecture" },

@@ -46,7 +46,7 @@ export function safeNext(next: string | null, origin: string): string {
 
 async function serveMembers(request: Request, url: URL, env: GateEnv, fetcher: Fetch): Promise<Response> {
   if (!env.MEMBERS_ORIGIN || !env.MEMBERS_ORIGIN_SECRET) {
-    return page(503, "Not published yet", "<p>You are a member — thank you. The members pages are not published yet.</p>");
+    return page(503, "Not published yet", "<p>You are a member, thank you. The members pages are not published yet.</p>");
   }
   const target = new URL(`${url.pathname}${url.search}`, env.MEMBERS_ORIGIN);
   // A fresh request: the reader's cookies and headers stay here.
