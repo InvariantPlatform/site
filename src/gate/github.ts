@@ -13,6 +13,8 @@ export type Fetch = (input: Request | string | URL, init?: RequestInit) => Promi
 
 export interface AppConfig {
   org: string;
+  /** Slug of the team every member joins; it grants read on the platform's source (ADR-211). */
+  team: string;
   appId: string;
   installationId: string;
   clientId: string;
@@ -128,13 +130,16 @@ export async function orgMembership(cfg: AppConfig, login: string, fetcher: Fetc
 }
 
 /**
- * Invite `login` as a plain member. GitHub emails the invitation; the reader
- * accepts it on github.com. Needs members: write — the ONE write permission
+ * Invite `login` into the members team as a plain member, which invites them
+ * to the org too. GitHub emails the invitation; the reader accepts it on
+ * github.com, and from then on can read the platform's source (ADR-211). Needs members: write — the ONE write permission
  * the App holds. Never an owner role, whatever the caller passes.
  */
 export async function inviteToOrg(cfg: AppConfig, login: string, fetcher: Fetch, nowMs: number): Promise<OrgState> {
   const token = await installationToken(cfg, fetcher, nowMs);
-  const res = await fetcher(`${API}/orgs/${encodeURIComponent(cfg.org)}/memberships/${encodeURIComponent(login)}`, {
+  // The team endpoint invites a reader who is not yet in the org, and they
+  // join the team (and so can read the source) the moment they accept.
+  const res = await fetcher(`${API}/orgs/${encodeURIComponent(cfg.org)}/teams/${encodeURIComponent(cfg.team)}/memberships/${encodeURIComponent(login)}`, {
     method: "PUT",
     headers: { ...apiHeaders(`Bearer ${token}`), "content-type": "application/json" },
     body: JSON.stringify({ role: "member" }),

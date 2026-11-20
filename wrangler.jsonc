@@ -32,6 +32,7 @@
     // "invariant-platform-members" holds ONE permission: Organization
     // members, write (read back 2026-11-12: no other permission, no events).
     "GITHUB_ORG": "InvariantPlatform",
+    "GITHUB_TEAM": "members",
     "GITHUB_APP_ID": "5726583",
     "GITHUB_APP_CLIENT_ID": "Ov23li2Il0SOg0oDnfob",
     "GITHUB_APP_INSTALLATION_ID": "181205606",

@@ -21,6 +21,7 @@ const PEM = `-----BEGIN PRIVATE KEY-----\n${btoa(String.fromCharCode(...pkcs8)).
 
 const ENV: GateEnv = {
   GITHUB_ORG: "InvariantPlatform",
+  GITHUB_TEAM: "members",
   GITHUB_APP_ID: "123",
   GITHUB_APP_INSTALLATION_ID: "456",
   GITHUB_APP_CLIENT_ID: "Iv1.client",

@@ -6,6 +6,8 @@ import type { AppConfig } from "./github.ts";
 
 export interface GateEnv {
   GITHUB_ORG?: string;
+  /** The members team (ADR-211). Unset = the gate is off, like any other missing setting. */
+  GITHUB_TEAM?: string;
   GITHUB_APP_ID?: string;
   GITHUB_APP_INSTALLATION_ID?: string;
   GITHUB_APP_CLIENT_ID?: string;
@@ -35,9 +37,9 @@ export interface Session {
 }
 
 export function appConfig(env: GateEnv): AppConfig | null {
-  const { GITHUB_ORG: org, GITHUB_APP_ID: appId, GITHUB_APP_INSTALLATION_ID: installationId, GITHUB_APP_CLIENT_ID: clientId, GITHUB_APP_CLIENT_SECRET: clientSecret, GITHUB_APP_PRIVATE_KEY: privateKey } = env;
-  if (!org || !appId || !installationId || !clientId || !clientSecret || !privateKey || !env.SESSION_SECRET) return null;
-  return { org, appId, installationId, clientId, clientSecret, privateKey };
+  const { GITHUB_ORG: org, GITHUB_TEAM: team, GITHUB_APP_ID: appId, GITHUB_APP_INSTALLATION_ID: installationId, GITHUB_APP_CLIENT_ID: clientId, GITHUB_APP_CLIENT_SECRET: clientSecret, GITHUB_APP_PRIVATE_KEY: privateKey } = env;
+  if (!org || !team || !appId || !installationId || !clientId || !clientSecret || !privateKey || !env.SESSION_SECRET) return null;
+  return { org, team, appId, installationId, clientId, clientSecret, privateKey };
 }
 
 export function privateHeaders(h: Headers): Headers {

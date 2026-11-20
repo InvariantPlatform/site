@@ -23,6 +23,7 @@ const PEM = `-----BEGIN PRIVATE KEY-----\n${btoa(String.fromCharCode(...pkcs8)).
 
 const ENV: GateEnv = {
   GITHUB_ORG: "InvariantPlatform",
+  GITHUB_TEAM: "members",
   GITHUB_APP_ID: "123",
   GITHUB_APP_INSTALLATION_ID: "456",
   GITHUB_APP_CLIENT_ID: "Iv1.client",
@@ -55,8 +56,10 @@ function fake(opts: Fake = {}): { fetch: Fetch; calls: Call[] } {
       return json(200, { id: "sub-1", email_address: "reader@example.com", ...s });
     }
     if (url.endsWith("/app/installations/456/access_tokens")) return json(201, { token: "inst-token", expires_at: new Date(NOW + 3_600_000).toISOString() });
+    if (url === "https://api.github.com/orgs/InvariantPlatform/teams/members/memberships/reader" && init?.method === "PUT") {
+      return json(opts.invite ?? 200, { state: "pending", role: "member" });
+    }
     if (url === "https://api.github.com/orgs/InvariantPlatform/memberships/reader") {
-      if (init?.method === "PUT") return json(opts.invite ?? 200, { state: "pending", role: "member" });
       const m = opts.membership ?? 404;
       return typeof m === "number" ? json(m, {}) : json(200, { state: m, role: "member" });
     }
@@ -202,7 +205,7 @@ test("status, unconfirmed: check your inbox, and GitHub is not asked", async () 
   assert.ok(!f.calls.some((c) => c.url.includes("api.github.com")));
 });
 
-test("status, confirmed and not yet invited: ONE invitation, as a plain member; membership rechecked next", async () => {
+test("status, confirmed and not yet invited: ONE invitation, into the members team, as a plain member; membership rechecked next", async () => {
   resetTokenCache();
   const f = fake({ subscriber: { type: "regular", metadata: { github_id: "42" } }, membership: 404 });
   const res = await run(get("/join/status", await cookies([SESSION_COOKIE, session()], [JOIN_COOKIE, pendingFor()])), ENV, f.fetch);
@@ -210,6 +213,7 @@ test("status, confirmed and not yet invited: ONE invitation, as a plain member; 
   assert.match(await res.text(), /Invitation sent/);
   const puts = f.calls.filter((c) => c.method === "PUT");
   assert.equal(puts.length, 1);
+  assert.equal(puts[0].url, "https://api.github.com/orgs/InvariantPlatform/teams/members/memberships/reader");
   assert.deepEqual(JSON.parse(puts[0].body!), { role: "member" });
   const set = res.headers.getSetCookie().find((c) => c.startsWith(`${SESSION_COOKIE}=`))!;
   const s = await unseal<{ checked: number }>(set.split(";")[0].slice(SESSION_COOKIE.length + 1), SECRET, NOW_S);
