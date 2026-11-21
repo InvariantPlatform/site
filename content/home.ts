@@ -52,6 +52,6 @@ export const register = {
 };
 
 export const offer = {
-  title: "The source is free. It just isn't anonymous.",
+  title: "Free membership: the source, the field notes and the register",
   body: "Members read the platform's code in its GitHub organization: the provisioner that builds, rolls and rebuilds the cluster, and every check it runs. With it come the field notes, the decision register and the architecture views. Join the organization and leave an email address. No cost, no seat count, no card, and you can leave whenever you like.",
 };

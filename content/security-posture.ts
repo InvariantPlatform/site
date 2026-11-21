@@ -37,7 +37,7 @@ export const groups: { name: string; hue: number; claims: Claim[] }[] = [
 // Lines that exist only to fail. They are never in the count; when one fires
 // it is a finding, and the count on the strip says so.
 export const failOnly = {
-  title: "And one line that exists only to fail",
+  title: "One line that only fails: a degraded service manager",
   body: "If the host's service manager reports itself degraded, the run fails and names the unit, watch list or not. This line has no passing form and is never counted.",
 };
 
