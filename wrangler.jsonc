@@ -22,6 +22,9 @@
   // Without the binding the Worker serves normally and the strip reads
   // "no run recorded".
   "kv_namespaces": [{ "binding": "STATUS", "id": "309b621a476d4bb1aced7b36e5d798c4" }],
+  // Page views, counted on the server (src/analytics.ts). The dataset is
+  // created on first write; query it with scripts/views.mjs.
+  "analytics_engine_datasets": [{ "binding": "VIEWS", "dataset": "invariant_page_views" }],
   "vars": {
     // The zone went active 2026-09-14 21:16 (registry delegation + Universal SSL).
     // Empty would mean: serve on every hostname, no redirect.

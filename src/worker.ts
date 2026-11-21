@@ -7,15 +7,18 @@
 //      the gate (src/gate, ADR-210) and goes no further: members content is
 //      never in the static export;
 //   3. otherwise the asset is served;
-//   4. if it is HTML, the status strip's `data-status` placeholders are
+//   4. if it is a public HTML page, one page view is counted on the server
+//      (src/analytics.ts): path, referring host, country. No script, no cookie;
+//   5. if it is HTML, the status strip's `data-status` placeholders are
 //      filled from Cloudflare KV — the document the nightly posture-check
 //      published from the host tier. No document: the strip says so. A
 //      document older than STALE_AFTER_HOURS: the strip says that, in amber.
 
 import { terminalHtml, runSummary, type TermLine } from "../lib/terminal-html";
 import { gate, isSignedInMember, type GateEnv } from "./gate/index.ts";
+import { countView, viewOf, type ViewsEnv } from "./analytics.ts";
 
-interface Env extends GateEnv {
+interface Env extends GateEnv, ViewsEnv {
   ASSETS: Fetcher;
   CANONICAL_HOST: string;
   // Bound in wrangler.jsonc once the namespace exists. Optional so a build
@@ -178,7 +181,9 @@ const worker = {
       return canonical && !preview ? withHsts(png) : png;
     }
     let res = asset;
-    if ((asset.headers.get("content-type") ?? "").includes("text/html")) {
+    const contentType = asset.headers.get("content-type") ?? "";
+    if (canonical && !preview) countView(env, viewOf(request, url, asset.status, contentType, canonical));
+    if (contentType.includes("text/html")) {
       const member = await isSignedInMember(request, env);
       res = fillStatus(asset, describe(await readPosture(env), new Date()), member);
       // The header now depends on who is asking: no shared cache may keep it.

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { site } from "@/site.config";
 
 // The teasers carry the search weight; the members pages are never indexed
 // (ADR-185). The gate also sends `X-Robots-Tag: noindex` on every gated and
@@ -8,5 +9,6 @@ export const dynamic = "force-static";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: { userAgent: "*", allow: "/", disallow: ["/members/", "/auth/", "/join/apply", "/join/status", "/join/buttondown-webhook"] },
+    sitemap: new URL("/sitemap.xml", site.url).toString(),
   };
 }

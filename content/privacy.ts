@@ -3,7 +3,7 @@
 // through that client. Kept to what is TRUE: the join flow is live (at
 // /join/apply, unlinked until site.joinOpen), so its processing is described
 // here whether or not the site advertises it. Move `updated` with any change.
-export const updated = "2026-11-19";
+export const updated = "2026-11-21";
 
 export const intro = {
   title: "Privacy",
@@ -24,8 +24,9 @@ const website: Section[] = [
   {
     title: "This website",
     body: [
-      "Reading the public pages sets no cookies, runs no analytics and loads no third-party trackers.",
-      "It is served by Cloudflare, which processes standard request data (IP address, user agent, the page requested) to deliver and protect the site, under Cloudflare's own privacy policy. This site does not receive or keep that data.",
+      "Reading the public pages sets no cookies and loads no analytics script or third-party tracker. Nothing is stored in your browser.",
+      "Page views are counted on the server, by the same Worker that serves the page: for each page, the path, the site that linked to it (its name only, such as linkedin.com) and the country Cloudflare reports. No IP address, browser details or anything else that could identify a visitor is kept, and members pages are not counted. The counts are kept in Cloudflare Workers Analytics Engine for at most three months.",
+      "It is served by Cloudflare, which processes standard request data (IP address, user agent, the page requested) to deliver and protect the site, under Cloudflare's own privacy policy. This site keeps none of it beyond the page-view counts above.",
     ],
   },
   {
