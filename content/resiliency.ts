@@ -50,6 +50,6 @@ export const attended = {
 };
 
 export const members = {
-  title: "For members: every rebuild, every failure, and what each one taught",
-  body: "The samples in order, with the timings. The rebuild that concentrated the whole platform on one node. The placement gate that passed while the property it protects was broken. The detached volume that a series of node replacements eroded to nothing, and the check that now runs before a node is destroyed.",
+  title: "For members: what the roll gate checks, and the failures behind it",
+  body: "Each condition the gate checks between nodes, with its code and the incident that put it there. Arriving in December's register: the rebuild that piled the whole platform onto one node, the volume that node replacements eroded to nothing, and why a roll has no attended steps.",
 };

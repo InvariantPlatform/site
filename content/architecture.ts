@@ -17,6 +17,6 @@ export const principles = [
 ];
 
 export const members = {
-  title: "For members: the other four views, the model itself, and the register",
+  title: "For members: the other four views, and the register",
   body: "The fleet view with its failure domains. The platform view. The supply-chain view that draws the deploy gate where it actually is. And the decision register: numbered decisions by category, each one a property that was asserted and, more often than not, did not hold the first time.",
 };

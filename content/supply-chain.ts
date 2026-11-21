@@ -51,6 +51,6 @@ export const pins = {
 };
 
 export const members = {
-  title: "For members: the verification chain end to end, and the tenant boundary",
-  body: "Every pin and every checksum, and the bump bot that refuses an upstream release that would downgrade a component. The identity leak found in two renderers at once. The morning the provisioner's own release discipline was written, and the rebuild an unreleased build ran while the guard was twenty minutes from existing.",
+  title: "For members: every pin, and the chain that enforces it",
+  body: "Every pin and checksum in both repositories, including the private configuration, and the code behind each link of the chain. Arriving in December's register: the signing identity hardcoded in two renderers, the rebuild an unreleased build ran while its guard was twenty minutes from existing, and why the node-image bot refuses a newer release.",
 };

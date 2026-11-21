@@ -34,6 +34,6 @@ export const gaps = {
 };
 
 export const members = {
-  title: "For members: the dashboards, the alert rules, and the alerting gap",
-  body: "The dashboards, built around the questions that were unanswerable the night they were needed, and later the live ones, where organization membership is the login. Every alert rule with the incident that produced it, including the one that reported success every day until the day it had something to say. And the audit stream that turned out to be a memory leak, found with a heap profile.",
+  title: "For members: every alert rule and every dashboard",
+  body: "Each rule's expression, threshold and runbook, and each dashboard panel with the question it answers. Arriving in December's register: the watcher that reported success every day until the day it had something to say, and the audit stream that turned out to be a memory leak. The live dashboards come later, with organization membership as the login.",
 };

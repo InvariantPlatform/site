@@ -48,6 +48,6 @@ export const why = [
 ];
 
 export const members = {
-  title: "For members: how each line is enforced, and what it cost to learn",
-  body: "The nightly output, verbatim, every night. The mechanism behind each invariant. The incident that put it on the list: the placement gate that passed while both nameservers sat on one node, the backup that mirrored an empty directory for months, the config that was unparseable for fourteen hours while every status said fine.",
+  title: "For members: the code behind every line, and why each exists",
+  body: "Each check in the nightly run, with the function that makes it and the incident that put it there. Arriving in December's register: the placement gate that passed while both nameservers sat on one node, and the configuration that was broken for fourteen hours while every check said fine.",
 };
