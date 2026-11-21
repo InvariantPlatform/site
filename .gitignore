@@ -6,3 +6,6 @@ next-env.d.ts
 .DS_Store
 .wrangler/
 .dev.vars
+
+# Infisical project link (machine-specific; holds the project id only)
+.infisical.yaml

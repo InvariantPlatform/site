@@ -7,7 +7,8 @@
 //
 // Needs, in the environment or in ~/.config/cloudflare/analytics.env:
 //   CLOUDFLARE_ACCOUNT_ID   the account the Worker runs in
-//   CLOUDFLARE_API_TOKEN    a token with ONLY "Account Analytics: Read"
+//   CLOUDFLARE_ACCOUNT_ANALYTICS  a token with ONLY "Account Analytics: Read"
+//                                 (kept in Infisical; CLOUDFLARE_API_TOKEN also works)
 // The token is sent to Cloudflare's API and nowhere else, and never printed.
 
 import { readFileSync } from "node:fs";
@@ -28,9 +29,9 @@ try {
   // no file: the environment must carry both values
 }
 const account = env.CLOUDFLARE_ACCOUNT_ID;
-const token = env.CLOUDFLARE_API_TOKEN;
+const token = env.CLOUDFLARE_ACCOUNT_ANALYTICS || env.CLOUDFLARE_API_TOKEN;
 if (!account || !token) {
-  console.error("Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN (Account Analytics: Read), or put them in ~/.config/cloudflare/analytics.env");
+  console.error("Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_ACCOUNT_ANALYTICS (Account Analytics: Read), or put them in ~/.config/cloudflare/analytics.env");
   process.exit(2);
 }
 
