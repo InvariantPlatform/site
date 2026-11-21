@@ -125,7 +125,7 @@ export function Flow({ steps }: { steps: Step[] }) {
               <span className="lg:hidden">↓</span><span className="hidden lg:inline">→</span>
             </span>
           )}
-          <Module color={HUES[hue[i % hue.length]]} tag={`stage ${i + 1}${s.planned ? " · not built" : ""}${s.gate ? " · gate" : ""}`} className={`p-4 h-full ${s.planned ? "border-dashed" : ""}`}>
+          <Module color={HUES[hue[i % hue.length]]} tag={[s.gate && "gate", s.planned && "not built"].filter(Boolean).join(" · ") || undefined} className={`p-4 h-full ${s.planned ? "border-dashed" : ""}`}>
             <span className="block text-[15px] font-semibold">{s.title}</span>
             <span className="block mt-1.5 text-xs leading-snug text-muted">{s.body}</span>
           </Module>

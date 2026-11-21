@@ -1,8 +1,8 @@
-import type { Row, Step } from "@/app/components/ui";
+import type { Step } from "@/app/components/ui";
 
 export const intro = {
   title: "Observability",
-  paragraphs: ["The metrics store, the log store, the dashboards and the alert rules run on the hypervisors, beside the cluster, as ordinary host services. It is the less elegant place to put them and the only place that can report the cluster is gone. Everything in this tier is provisioned from a repository and restarted when its configuration changes, because a file written is not a file applied. This platform learned that at every layer."],
+  paragraphs: ["The metrics store, the log store, the dashboards and the alert rules run on the hypervisors, beside the cluster, as ordinary host services. It is the less elegant place to put them and the only place that can report the cluster is gone. All of it is provisioned from a repository and restarted when its configuration changes, because a file written is not a file applied."],
   rule: "A monitor inside the thing it monitors cannot report that the thing is gone.",
 };
 
@@ -11,27 +11,26 @@ export const shape = { title: "The shape", sub: "Signals leave the cluster; noth
 export const flow: Step[] = [
   { title: "Agents on every node", body: "Scrape metrics, ship logs. Configuration is code; a hand edit is reverted." },
   { title: "Host tier, beside the cluster", body: "Metrics and logs stores on the hypervisor, not in the thing they watch.", gate: true },
-  { title: "Dashboards from git", body: "Click-ops is disabled, not discouraged. A panel that is not in the repository does not exist." },
-  { title: "Rules that read the stores", body: "Decided, not built. Today every alert is a probe of a front door or a unit; a rule that reads the metrics store and decides is the next component in the model.", planned: true },
-  { title: "A page to a phone", body: "Every probe ends in a notification, and the path has fired for real. What is not yet watched is the notifier's own silence.", gate: true },
+  { title: "Dashboards from git", body: "Editing in the UI is disabled. A panel that is not in the repository does not exist." },
+  { title: "Rules that read the stores", body: "A target down, a disk or volume filling, a CronJob that has not succeeded, logs that stopped arriving, a certificate near expiry.", gate: true },
+  { title: "A page to a phone", body: "Rules and probes end in the same notification path, and it has fired for real. The notifier's own silence is not yet watched.", gate: true },
 ];
 
 export const principles = [
-  { title: "Rebuildable, like everything else", body: "The tier is provisioned by the same tool that builds the nodes. Only its data is backed up; the stack itself is a declaration and comes back from one." },
-  { title: "A probe that has never fired is a hypothesis", body: "Every probe on the hosts was written after a real incident, and the path from probe to phone has been exercised for real: the night the edge lock landed, the front door went away, a page arrived within minutes, and a second page said it was back. The ones that were wrong, such as a job that reported success on an empty run, are in the register with their numbers." },
-  { title: "The gaps are named", body: "Below, in order. A gap under a green panel is a lie; a gap in a numbered list is a decision that has not been taken yet, and the register says which." },
+  { title: "Rebuildable, like everything else", body: "The tier is provisioned by the same tool that builds the nodes. Only its data is backed up; the stack itself comes back from the declaration." },
+  { title: "A rule written against an incident", body: "The rules ask the questions that went unanswered when they mattered: a backup job that had never once succeeded behind a front door answering 200, a volume filling with nothing reading the metric that said so." },
+  { title: "The gaps are named", body: "Below. A gap under a green panel is a lie; a gap in a list is a decision not yet taken, and the register says which." },
 ];
 
-// The gaps, in public, each with why it is a gap and what closes it. When one
-// closes it leaves this list and becomes a line in the nightly check.
+// The gaps, in public. When one closes it leaves this list and becomes a line
+// in the nightly check or a rule.
 export const gaps = {
   title: "The named gaps",
-  sub: "written down as gaps, not hidden under a green panel · each one closes into a line of the nightly check",
-  rows: [
-    { k: "Every alert is a probe of a door, not a reading of the stores", v: "A front door answered 200 for the entire life of a backup job that had never once succeeded, and through forty-two hours of another one deadlocked. A dead backup changes no HTTP response; neither does a volume at ninety-six percent. The metrics that would say so are collected; nothing yet reads them and decides." },
-    { k: "The check pages on a finding, not on its own silence", v: "If the nightly check never runs, nothing pages. A watcher for the watcher exists on each host; it does not yet close the loop end to end. Until it does, a quiet morning is a claim the strip above cannot fully make." },
-    { k: "A peer that cannot reach a node says so quietly", v: "When a node is rebuilt its host key changes, and a peer hypervisor's probes of that node fall back to \"not checked\": printed, but neither counted nor published. Honest, and silent." },
-  ] satisfies Row[],
+  sub: "written down, not hidden under a green panel · each one closes into a check",
+  cards: [
+    { title: "The check pages on a finding, not on its own silence", body: "If the nightly check never runs, nothing pages. Each host has a watcher for the watcher, but the loop is not yet closed end to end." },
+    { title: "A peer that cannot reach a node says so quietly", body: "A rebuilt node has a new host key, so a peer's probes of it fall back to \"not checked\": printed, but neither counted nor published." },
+  ],
 };
 
 export const members = {
