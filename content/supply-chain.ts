@@ -3,7 +3,7 @@ import type { Claim } from "@/app/components/instrument";
 
 export const intro = {
   title: "Supply chain",
-  paragraphs: ["Nothing reaches the cluster except a signed artifact from one named workflow, and nothing reaches the hosts except a signed release, installed by version. A push to git deploys nothing; the artifact is the deploy gate. Every upstream version (the node image, the reconciler, the storage layer, the signing tool) is pinned in a committed file with its checksum, and a bot watches each one."],
+  paragraphs: ["Nothing reaches the cluster except a signed artifact from one named workflow, and nothing reaches the hosts except a signed release, installed by version. A push to git deploys nothing; the artifact is the deploy gate. Every upstream component (the node image, the reconciler's operator, the storage layer, the signing tool) is pinned in a committed file, by checksum wherever upstream publishes a file, and a bot watches each one."],
   rule: "If a component can be changed by a path that is not signed, that path is the platform's real supply chain.",
 };
 
@@ -41,10 +41,10 @@ export const release = {
 };
 
 export const pins = {
-  title: "Pinned, all of it",
+  title: "Pinned, and watched",
   sub: "a bot proposes every bump · a person merges it · nothing merges itself",
   cards: [
-    { title: "Version and checksum move together", body: "Each upstream is a version and a sha256 in one committed file. The bot re-downloads from the recorded URL and updates both in one change, so the record cannot drift from the bytes." },
+    { title: "Version and checksum move together", body: "Where upstream publishes a file, its version and sha256 sit in one committed file, and the bot updates both in one change. A component assembled here has no file to hash, so its image tag is the version of record. The reconciler follows a 2.x range, kept current by its pinned operator." },
     { title: "A Kubernetes downgrade is refused", body: "The node-image bot compares versions before proposing one. An image carrying an older Kubernetes than the one running is refused, with the reason." },
     { title: "The bots are pinned too", body: "Their workflows pin every action by commit. A mechanical bump arrives as a pull request; one that needs reading arrives as an issue." },
   ],
