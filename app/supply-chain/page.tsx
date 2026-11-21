@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SignedPaths } from "../components/figures";
 import { Band, CardGrid, Flow, Intro, MembersStrip, SectionHead } from "../components/ui";
 import { Timeline } from "../components/instrument";
 import { flow, intro, members, pins, release, repoCards, repos, shape } from "@/content/supply-chain";
@@ -9,7 +10,7 @@ export default function Page() {
   return (
     <>
       <Intro {...intro} />
-      <Band><SectionHead {...shape} /><Flow steps={flow} /></Band>
+      <Band><SectionHead {...shape} /><SignedPaths /><Flow steps={flow} /></Band>
       <Band><SectionHead {...repos} /><CardGrid cards={repoCards} /></Band>
       <Band>
         <SectionHead title={release.title} sub={release.sub} />

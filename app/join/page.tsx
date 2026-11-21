@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { JoinSteps } from "../components/figures";
 import { CardGrid, GitHubIcon, Intro, Wrap } from "../components/ui";
 import { site } from "@/site.config";
 import { after, author, consent, intro, notOpen, steps, terms } from "@/content/join";
@@ -9,6 +10,7 @@ export default function Page() {
   return (
     <>
       <Intro {...intro} />
+      <section className="pt-2"><Wrap><JoinSteps /></Wrap></section>
       <section className="py-8">
         <Wrap>
           <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-8 md:gap-16 items-start">
