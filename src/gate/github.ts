@@ -132,7 +132,7 @@ export async function orgMembership(cfg: AppConfig, login: string, fetcher: Fetc
 /**
  * Invite `login` into the members team as a plain member, which invites them
  * to the org too. GitHub emails the invitation; the reader accepts it on
- * github.com, and from then on can read the platform's source (ADR-211). Needs members: write — the ONE write permission
+ * github.com, and from then on can read the platform's source (ADR-211). Needs members: write, the ONE write permission
  * the App holds. Never an owner role, whatever the caller passes.
  */
 export async function inviteToOrg(cfg: AppConfig, login: string, fetcher: Fetch, nowMs: number): Promise<OrgState> {
@@ -150,6 +150,32 @@ export async function inviteToOrg(cfg: AppConfig, login: string, fetcher: Fetch,
   throw new Error(`invitation answered ${res.status}`);
 }
 
+/**
+ * The current login of GitHub account `githubId`, or null if the account is
+ * gone. The NUMBER never changes; a login can be renamed or recycled.
+ */
+async function loginOf(token: string, githubId: number, fetcher: Fetch): Promise<string | null> {
+  const res = await fetcher(`${API}/user/${githubId}`, { headers: apiHeaders(`Bearer ${token}`), redirect: "manual" });
+  if (res.status === 404) return null;
+  const user = (await res.json()) as { login?: string; id?: number };
+  if (res.status !== 200 || typeof user.login !== "string" || user.id !== githubId) throw new Error(`user lookup answered ${res.status}`);
+  return user.login;
+}
+
+/**
+ * Invite GitHub account `githubId` unless it is already a member or already
+ * invited: the half of joining that runs when the provider says the email is
+ * confirmed, wherever the reader clicked the link. Reading first means a
+ * redelivered event never sends a second invitation email.
+ */
+export async function inviteById(cfg: AppConfig, githubId: number, fetcher: Fetch, nowMs: number): Promise<OrgState | "gone"> {
+  const token = await installationToken(cfg, fetcher, nowMs);
+  const login = await loginOf(token, githubId, fetcher);
+  if (login === null) return "gone";
+  const state = await orgMembership(cfg, login, fetcher, nowMs);
+  return state === "none" ? inviteToOrg(cfg, login, fetcher, nowMs) : state;
+}
+
 export type Removal = "removed" | "not-a-member" | "owner-kept";
 
 /**
@@ -162,12 +188,10 @@ export type Removal = "removed" | "not-a-member" | "owner-kept";
  */
 export async function removeFromOrg(cfg: AppConfig, githubId: number, fetcher: Fetch, nowMs: number): Promise<Removal> {
   const token = await installationToken(cfg, fetcher, nowMs);
-  const userRes = await fetcher(`${API}/user/${githubId}`, { headers: apiHeaders(`Bearer ${token}`), redirect: "manual" });
-  if (userRes.status === 404) return "not-a-member"; // the account itself is gone
-  const user = (await userRes.json()) as { login?: string; id?: number };
-  if (userRes.status !== 200 || typeof user.login !== "string" || user.id !== githubId) throw new Error(`user lookup answered ${userRes.status}`);
+  const login = await loginOf(token, githubId, fetcher);
+  if (login === null) return "not-a-member"; // the account itself is gone
 
-  const path = `${API}/orgs/${encodeURIComponent(cfg.org)}/memberships/${encodeURIComponent(user.login)}`;
+  const path = `${API}/orgs/${encodeURIComponent(cfg.org)}/memberships/${encodeURIComponent(login)}`;
   const memRes = await fetcher(path, { headers: apiHeaders(`Bearer ${token}`), redirect: "manual" });
   if (memRes.status === 404) return "not-a-member";
   const mem = (await memRes.json()) as { role?: string; state?: string };

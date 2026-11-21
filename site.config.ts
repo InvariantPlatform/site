@@ -15,7 +15,7 @@ export const site = {
   // The join flow is built and live behind this flag. It stays false until the
   // soft opening (a full sign-up and unsubscribe test first); every Join CTA
   // reads it, and the join page says "not open yet" while it is false.
-  joinOpen: false,
+  joinOpen: true,
   nav: [
     { href: "/architecture/", label: "Architecture" },
     { href: "/security-posture/", label: "Security posture" },

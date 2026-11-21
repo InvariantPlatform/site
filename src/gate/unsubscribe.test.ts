@@ -37,6 +37,8 @@ interface Fake {
   user?: number;                 // GET /user/{id} status
   role?: "member" | "admin" | 404;
   del?: number;
+  state?: "active" | "pending";  // org membership state when role is set
+  put?: number;                  // PUT team membership status
 }
 interface Call { url: string; method: string }
 
@@ -61,7 +63,11 @@ function fake(opts: Fake = {}): { fetch: Fetch; calls: Call[] } {
     if (url === "https://api.github.com/orgs/InvariantPlatform/memberships/renamed-reader") {
       if (method === "DELETE") return new Response(null, { status: opts.del ?? 204 });
       const r = opts.role ?? "member";
-      return r === 404 ? json(404, {}) : json(200, { role: r, state: "active" });
+      return r === 404 ? json(404, {}) : json(200, { role: r, state: opts.state ?? "active" });
+    }
+    if (url === "https://api.github.com/orgs/InvariantPlatform/teams/members/memberships/renamed-reader" && method === "PUT") {
+      const st = opts.put ?? 200;
+      return json(st, st === 200 ? { role: "member", state: "pending" } : {});
     }
     throw new Error(`unexpected fetch ${method} ${url}`);
   };
@@ -128,7 +134,7 @@ test("only POST", async () => {
 });
 
 test("other event types are acknowledged and ignored", async () => {
-  const body = JSON.stringify({ id: "evt-2", event_type: "subscriber.confirmed", data: { subscriber: "sub-1" } });
+  const body = JSON.stringify({ id: "evt-2", event_type: "subscriber.created", data: { subscriber: "sub-1" } });
   const f = fake();
   assert.equal((await hook(f, { body })).status, 204);
   assert.equal(f.calls.length, 0);
@@ -175,5 +181,50 @@ test("any doubt is a 503 so Buttondown retries", async () => {
 test("malformed signed payloads are refused", async () => {
   for (const body of ["not json", JSON.stringify({ event_type: "subscriber.unsubscribed", data: {} }), JSON.stringify({ event_type: "subscriber.unsubscribed", data: { subscriber: "../x" } })]) {
     assert.equal((await hook(fake(), { body })).status, 400, body);
+  }
+});
+
+// Confirmation: the invitation is sent when the provider says so, not when
+// the reader finds their way back to /join/status (bug-238).
+const CONFIRMED = JSON.stringify({ id: "evt-3", event_type: "subscriber.confirmed", data: { subscriber: "sub-1" } });
+const invited = (calls: Call[]) => calls.filter((c) => c.method === "PUT");
+const confirmedSub = { type: "regular", metadata: { github_id: "42" } };
+
+test("a confirmation invites the account, found by its number, into the team", async () => {
+  const f = fake({ subscriber: confirmedSub, role: 404 });
+  assert.equal((await hook(f, { body: CONFIRMED })).status, 204);
+  assert.deepEqual(invited(f.calls).map((c) => c.url), ["https://api.github.com/orgs/InvariantPlatform/teams/members/memberships/renamed-reader"]);
+  assert.ok(!removed(f.calls));
+});
+
+test("a redelivered confirmation sends no second invitation", async () => {
+  for (const state of ["active", "pending"] as const) {
+    const f = fake({ subscriber: confirmedSub, role: "member", state });
+    assert.equal((await hook(f, { body: CONFIRMED })).status, 204);
+    assert.equal(invited(f.calls).length, 0, state);
+  }
+});
+
+test("the current state decides: a confirmation for someone since unsubscribed invites nobody", async () => {
+  for (const type of ["unactivated", "unsubscribed"]) {
+    const f = fake({ subscriber: { type, metadata: { github_id: "42" } }, role: 404 });
+    assert.equal((await hook(f, { body: CONFIRMED })).status, 204);
+    assert.equal(invited(f.calls).length, 0, type);
+    assert.ok(!removed(f.calls), type);
+  }
+});
+
+test("a confirmation with no GitHub account, or a deleted one, does nothing", async () => {
+  const f = fake({ subscriber: { type: "regular", metadata: {} } });
+  assert.equal((await hook(f, { body: CONFIRMED })).status, 204);
+  assert.ok(!f.calls.some((c) => c.url.includes("api.github.com")));
+  const gone = fake({ subscriber: confirmedSub, user: 404 });
+  assert.equal((await hook(gone, { body: CONFIRMED })).status, 204);
+  assert.equal(invited(gone.calls).length, 0);
+});
+
+test("a confirmation GitHub refuses is a 503 so Buttondown retries", async () => {
+  for (const opts of [{ put: 422 }, { user: 500 }, { subscriber: 500 }] as Fake[]) {
+    assert.equal((await hook(fake({ subscriber: confirmedSub, role: 404, ...opts }), { body: CONFIRMED })).status, 503, JSON.stringify(opts));
   }
 });

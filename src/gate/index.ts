@@ -1,12 +1,15 @@
 // The members gate (ADR-185, ADR-210): gated paths on the public hostname,
 // enforced here, in front of everything else. It is the whole access decision,
-// so it is written to fail closed — every path that is not a positive,
+// so it is written to fail closed: every path that is not a positive,
 // current "member" ends in a redirect to sign in, a 403, or a 503, and never
 // in members content:
 //   - no session or a bad signature    → sign in
 //   - signed in, not a member          → 403, pointing at /join/
 //   - membership older than RECHECK    → asked again; an error is a 503, not
 //                                        a fall back to the old answer
+//   - a "no" is never trusted          → asked again on every visit, so a
+//                                        reader who just accepted the
+//                                        invitation is let in at once
 //   - any configuration missing        → 503
 // Members content is never in the static export or the public repository. It
 // is fetched from MEMBERS_ORIGIN (private, origin-locked) with a basic-auth
@@ -141,7 +144,10 @@ export async function gate(request: Request, env: GateEnv, url: URL, fetcher: Fe
   if (!session) return redirect(`/auth/login?next=${encodeURIComponent(`${p}${url.search}`)}`);
 
   const cookies: string[] = [];
-  if (now - session.checked >= RECHECK_SECONDS) {
+  // A "yes" is trusted for RECHECK_SECONDS; a "no" not at all. Caching the
+  // "no" kept a reader who had just accepted the invitation out for up to
+  // ten minutes (bug-238), and only a non-member pays for the extra call.
+  if (!session.member || now - session.checked >= RECHECK_SECONDS) {
     try {
       session = { ...session, member: await isOrgMember(cfg, session.login, fetcher, nowMs), checked: now };
       cookies.push(setCookie(SESSION_COOKIE, await seal(session, secret), session.exp - now));

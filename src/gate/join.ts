@@ -14,7 +14,10 @@
 // provider; membership lives at GitHub; the reader's browser holds only a
 // signed note of which address they gave (JOIN_COOKIE). A confirmation clicked
 // on another device still works: sign in, give the same address, and the
-// metadata check finds it.
+// metadata check finds it. Since bug-238 the invitation does not wait for
+// that: the provider's `subscriber.confirmed` webhook sends it
+// (unsubscribe.ts), and /join/status is only where a reader who did come back
+// is told what happened.
 //
 // It fails closed like the gate: any answer it does not understand from
 // GitHub or the provider is a 503 and no invitation.
@@ -133,7 +136,7 @@ async function status(request: Request, cfg: AppConfig, env: GateEnv, session: S
   }
   if (!sub || !ownedBy(sub, session)) return redirect("/join/apply", [clearCookie(JOIN_COOKIE)]);
   if (sub.type === "unactivated") {
-    return page(200, "Check your inbox", `<p>A confirmation email went to <strong>${email}</strong>. Click the link in it, then <a href="/join/status">reload this page</a>.</p><p class="small">Nothing arrived? Check spam, or <a href="/join/apply">use a different address</a>.</p>`);
+    return page(200, "Check your inbox", `<p>A confirmation email went to <strong>${email}</strong>. Click the link in it, on any device. GitHub then emails <strong>${escapeHtml(session.login)}</strong> an invitation to <strong>${escapeHtml(cfg.org)}</strong>; accept it, and the members pages open. There is no need to come back here.</p><p class="small">Nothing arrived? Check spam, or <a href="/join/apply">use a different address</a>.</p>`);
   }
   if (!isConfirmed(sub)) {
     return page(403, "Not on the list", `<p><strong>${email}</strong> is not subscribed (it was unsubscribed, or mail to it bounced), so no invitation is sent. <a href="/join/apply">Use another address</a>.</p>`);

@@ -1,15 +1,24 @@
-// Unsubscribing ends the membership (ADR-210). Joining trades an email
+// The list and the org move together (ADR-210). Joining trades an email
 // address for an org invitation; leaving the list takes the invitation back.
 //
-// Buttondown POSTs `subscriber.unsubscribed` here. The webhook is only a POKE:
+// Buttondown POSTs two events here:
+//   `subscriber.confirmed`    the reader clicked the confirmation link, on
+//                             whatever device; the App sends the invitation.
+//                             Without this, the invitation waited for the
+//                             reader to come back to /join/status in the
+//                             browser they signed up in, and on a phone the
+//                             link opens somewhere else (bug-238).
+//   `subscriber.unsubscribed` the membership ends.
+// The webhook is only a POKE:
 //   1. the signature must verify (HMAC-SHA256 of the raw body, the webhook's
 //      signing key) or nothing is read;
 //   2. the payload supplies one thing, the subscriber's id. Everything else is
-//      read back from Buttondown with our own key, so a forged or replayed
-//      event can at most ask us to re-check someone who really unsubscribed;
-//   3. if that subscriber is confirmed again (they re-subscribed), nothing
-//      happens. Delivery is at-least-once and unordered, so the CURRENT state
-//      decides, never the event;
+//      read back from Buttondown with our own key, so a replayed event can at
+//      most ask us to re-check someone, and the check reads their real state;
+//   3. delivery is at-least-once and unordered, so the CURRENT state
+//      decides, never the event: a confirmed subscriber is invited (once; a
+//      member or a pending invitation is left alone) and never removed; an
+//      unconfirmed one is removed and never invited;
 //   4. the GitHub account is the one the join flow stored (`github_id`), and
 //      removeFromOrg never touches an owner.
 // Any doubt is a 503: Buttondown retries 5 times, about 5 minutes apart, and
@@ -17,7 +26,7 @@
 // guess, and nobody stays because of a dropped event without that email.
 
 import { getSubscriber, isConfirmed } from "./buttondown.ts";
-import { removeFromOrg, type AppConfig, type Fetch } from "./github.ts";
+import { inviteById, removeFromOrg, type AppConfig, type Fetch } from "./github.ts";
 import type { GateEnv } from "./common.ts";
 
 export const WEBHOOK_PATH = "/join/buttondown-webhook";
@@ -55,19 +64,26 @@ export async function buttondownWebhook(request: Request, env: GateEnv, cfg: App
   } catch {
     return empty(400);
   }
-  if (event.event_type !== "subscriber.unsubscribed") return empty(204);
+  const kind = event.event_type;
+  if (kind !== "subscriber.unsubscribed" && kind !== "subscriber.confirmed") return empty(204);
   const id = event.data?.subscriber;
   if (typeof id !== "string" || !/^[\w-]{1,64}$/.test(id)) return empty(400);
 
   try {
     const sub = await getSubscriber(env.BUTTONDOWN_API_KEY, id, fetcher);
-    if (!sub || isConfirmed(sub)) return empty(204);
+    if (!sub) return empty(204);
     const githubId = String(sub.metadata.github_id ?? "");
-    // Not someone the join flow invited: nothing of ours to take back.
+    // Not someone the join flow signed up: no GitHub account to act on.
     if (!/^\d{1,20}$/.test(githubId)) return empty(204);
-    const outcome = await removeFromOrg(cfg, Number(githubId), fetcher, nowMs);
-    // The outcome only: no login, no address, in the Worker's logs.
-    console.log(`unsubscribe: ${outcome}`);
+    // The event says which way to look; the current state decides whether to act.
+    if (kind === "subscriber.confirmed") {
+      if (!isConfirmed(sub)) return empty(204);
+      // The outcome only: no login, no address, in the Worker's logs.
+      console.log(`confirmed: ${await inviteById(cfg, Number(githubId), fetcher, nowMs)}`);
+      return empty(204);
+    }
+    if (isConfirmed(sub)) return empty(204);
+    console.log(`unsubscribe: ${await removeFromOrg(cfg, Number(githubId), fetcher, nowMs)}`);
     return empty(204);
   } catch {
     return empty(503);

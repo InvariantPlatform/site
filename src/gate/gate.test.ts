@@ -180,7 +180,8 @@ test("callback with the wrong state is refused", async () => {
 });
 
 test("signed in but not a member: 403 with the way to join, no content", async () => {
-  const gh = fakeGitHub();
+  resetTokenCache();
+  const gh = fakeGitHub({ membership: 404 });
   const [r, u] = req("/members/", await sessionCookie(false));
   const res = (await gate(r, ENV, u, gh.fetch, NOW))!;
   assert.equal(res.status, 403);
@@ -199,6 +200,25 @@ test("a stale answer is re-asked: removed from the org means 403 from then on", 
   const v = await unseal<{ member: boolean; checked: number; exp: number }>(fresh.split(";")[0].split("=").slice(1).join("="), ENV.SESSION_SECRET!, NOW_S);
   assert.equal(v?.member, false);
   assert.equal(v?.checked, NOW_S);
+});
+
+test("a \"no\" is re-asked on every visit: accepting the invitation opens the door at once", async () => {
+  resetTokenCache();
+  const [r, u] = req("/members/", await sessionCookie(false, 5));
+  const res = (await gate(r, ENV, u, fakeGitHub({ membership: 204 }).fetch, NOW))!;
+  assert.equal(res.status, 200);
+  assert.match(await res.text(), /members content/);
+  const fresh = res.headers.getSetCookie().find((c) => c.startsWith(`${SESSION_COOKIE}=`))!;
+  const v = await unseal<{ member: boolean }>(fresh.split(";")[0].split("=").slice(1).join("="), ENV.SESSION_SECRET!, NOW_S);
+  assert.equal(v?.member, true);
+});
+
+test("a recent \"yes\" is not re-asked", async () => {
+  resetTokenCache();
+  const gh = fakeGitHub({ membership: 404 });
+  const [r, u] = req("/members/", await sessionCookie(true, 5));
+  assert.equal((await gate(r, ENV, u, gh.fetch, NOW))!.status, 200);
+  assert.ok(!gh.calls.some((c) => c.url.includes("/members/reader")));
 });
 
 test("a stale answer that cannot be re-asked is a 503, never the old yes", async () => {
