@@ -25,3 +25,16 @@ export const author = {
   body: "Invariant Platform is built and run by Brad Penney, a Kubernetes platform lead who writes for engineers who need something working, not just studied. The platform is the thing behind the writing: everything at bradpenney.io that says \"in production\" was tried here first.",
   cta: "Read the writing at bradpenney.io →",
 };
+
+// Where the list provider sends a reader after they click the confirmation
+// link (its subscription_confirmation_redirect_url). The invitation is sent
+// by the confirmation webhook, not by this page, which collects nothing.
+export const confirmed = {
+  title: "Email confirmed",
+  paragraphs: ["GitHub is sending your invitation to the InvariantPlatform organization now. It arrives by email from GitHub within a minute, and it is also waiting on GitHub itself."],
+  steps: [
+    { n: "1", label: "Accept the invitation on GitHub", href: "https://github.com/orgs/InvariantPlatform/invitation" },
+    { n: "2", label: "Open the members pages", href: "/members/" },
+  ],
+  note: "Step 2 asks you to sign in with GitHub if this browser has not already. If it says you are not a member, the invitation has not been accepted yet: do step 1, then try again.",
+};
