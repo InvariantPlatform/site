@@ -6,7 +6,7 @@ export const intro = {
 
 export const contextView = {
   name: "Context view",
-  meta: "rendered from the model · 46 nodes · 44 relationships",
+  meta: "simplified from the model · members see every view",
   caption: "Two paths in, and only two. A change arrives as a signed artifact or not at all; a visitor arrives through the edge or not at all.",
 };
 

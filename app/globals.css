@@ -106,3 +106,25 @@ body { background: var(--background); color: var(--foreground); -webkit-font-smo
 .trace-pulse { stroke-dasharray: 14 1400; stroke-dashoffset: 14; animation: trace-pulse 3s cubic-bezier(.5, 0, .5, 1) infinite; }
 @keyframes trace-pulse { 0% { stroke-dashoffset: 14; stroke-opacity: 0; } 12% { stroke-opacity: 1; } 88% { stroke-opacity: 1; } 100% { stroke-dashoffset: -660; stroke-opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .led, .trace-pulse { animation: none; } .trace-pulse { display: none; } }
+
+/* Architecture diagrams: ArchHover adds .focus/.lit/.hot, the same language as
+   the members views. Hover (or tap) a component to follow its connections. */
+.arch-live .shape { fill: transparent; stroke: #374151; transition: stroke .2s, filter .2s; }
+.arch-live [data-node] { cursor: pointer; transition: opacity .2s; }
+.arch-live [data-node]:hover .shape, .arch-live [data-node].lit .shape { stroke: var(--amber); filter: drop-shadow(0 0 6px rgba(245, 158, 11, .45)); }
+.arch-live .wire { stroke: #f59e0b; stroke-width: 1.5; fill: none; stroke-opacity: .75; transition: stroke-opacity .2s; }
+.arch-live .hit { stroke: transparent; stroke-width: 16; pointer-events: stroke; }
+.arch-live .wires text { fill: #9ca3af; transition: fill .2s; }
+.arch-live [data-from] { transition: opacity .2s; }
+.arch-live [data-from].lit .wire, .arch-live [data-from].hot .wire {
+  stroke-opacity: 1; stroke-width: 2; stroke-dasharray: 7 5; animation: arch-flow .9s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, .8));
+}
+.arch-live [data-from].lit text, .arch-live [data-from].hot text { fill: #e8e8e8; }
+.arch-live .estate { transition: opacity .2s; }
+.arch-live.focus [data-from]:not(.lit) { opacity: .15; }
+.arch-live.focus [data-node]:not(.lit) { opacity: .35; }
+@keyframes arch-flow { to { stroke-dashoffset: -12; } }
+@media (prefers-reduced-motion: reduce) {
+  .arch-live [data-from].lit .wire, .arch-live [data-from].hot .wire { animation: none; stroke-dasharray: none; }
+}

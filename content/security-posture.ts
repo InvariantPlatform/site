@@ -1,36 +1,36 @@
-import type { Row } from "@/app/components/ui";
+import type { Claim } from "@/app/components/instrument";
 
 export const intro = {
   title: "Security posture",
-  paragraphs: ["The properties the platform claims. Each one is re-asserted every night by a process that runs outside the cluster, as an identity that can only read, and pages when the property no longer holds. What follows is the list and what each line means. How each is enforced, and the incident that put it on the list, is for members."],
+  paragraphs: ["The properties the platform claims. Every night a process outside the cluster, with an identity that can only read, re-asserts each one and pages when one no longer holds. How each is enforced, and the incident that put it on the list, is for members."],
 };
 
-export const groups: { name: string; rows: Row[] }[] = [
-  { name: "Inside the cluster", rows: [
-    { k: "Pod security is enforced in every namespace", v: "No namespace runs without a standard applied, including the ones the distribution creates itself." },
+export const groups: { name: string; hue: number; claims: Claim[] }[] = [
+  { name: "Inside the cluster", hue: 0, claims: [
+    { k: "Pod security is enforced in every namespace", v: "Including the namespaces the distribution creates itself." },
     { k: "Every namespace starts from deny", v: "Traffic is allowed by listing, never by omission." },
-    { k: "Admission policies enforce, not warn", v: "A policy in audit mode is a report, not a control." },
-    { k: "Cluster-admin is a known, short list", v: "Five subjects, each expected. A sixth pages." },
-    { k: "No standing elevated access", v: "The operator holds no write access at rest; elevation is a recorded, self-expiring grant." },
-    { k: "Configuration is reconciling", v: "Every part of the platform is applied from one source and pruned back to it." },
-    { k: "The artifact is signed by one named workflow", v: "Verification can be removed without anything breaking. That is why it is checked." },
-    { k: "Secrets come from a manager, never from git", v: "Ten external secrets, all syncing." },
-    { k: "Every volume has a replica on every hypervisor", v: "Losing one host must not lose data. A volume that has drifted onto a single host is a finding, not a footnote." },
+    { k: "Admission policies enforce", v: "A policy in audit mode is a report, so audit mode does not count." },
+    { k: "Cluster-admin is a known, short list", v: "Every subject on it is expected. A new one pages." },
+    { k: "No standing elevated access", v: "Elevation is a recorded grant that expires on its own." },
+    { k: "Configuration is reconciling", v: "Applied from one source and pruned back to it." },
+    { k: "The artifact is signed by one named workflow", v: "Removing verification would break nothing, which is why it is checked." },
+    { k: "Secrets come from a manager, never from git", v: "Every external secret is syncing." },
+    { k: "Every volume has a replica on every hypervisor", v: "A volume that drifts onto one host is a finding." },
   ]},
-  { name: "On the hosts beneath it", rows: [
-    { k: "SELinux enforcing on this hypervisor", v: "No permissive domains, no custom modules. Found clean the day the check was written. The check exists because, until then, nothing was watching for drift." },
-    { k: "SELinux enforcing on every peer", v: "The same question asked of each other hypervisor over the wire. One line per peer; a peer that cannot be asked is reported as such, not counted." },
-    { k: "No failed units on the watch list", v: "Nine units that must be healthy for the platform to be trustworthy, named in the tool, not discovered at run time." },
-    { k: "Every peer's update service is idle and gated", v: "Nightly patching on one host defers to the others rather than colliding with them." },
+  { name: "On the hosts", hue: 1, claims: [
+    { k: "SELinux enforcing on this hypervisor", v: "No permissive domains and no custom modules." },
+    { k: "SELinux enforcing on every peer", v: "Asked over the wire. A peer that cannot be asked is reported, and not counted." },
+    { k: "No failed units on the watch list", v: "The units the platform depends on, named in the tool rather than discovered at run time." },
+    { k: "Every peer's update service is idle and gated", v: "Patching on one host waits for the others." },
   ]},
-  { name: "At the edge", rows: [
-    { k: "The public site answers through the edge", v: "Resolved by a public resolver, not the host's own: for a week, split-horizon DNS had this line measuring the LAN instead of the edge." },
-    { k: "A direct hit on the origin is refused", v: "The one finding in the whole list that would mean someone bypassed the edge." },
-    { k: "Restricted ports refuse non-listed sources", v: "Probed from a source that must be denied, then from one that must be allowed." },
+  { name: "At the edge", hue: 2, claims: [
+    { k: "The public site answers through the edge", v: "Resolved by a public resolver, so the check sees what a visitor sees." },
+    { k: "A direct hit on the origin is refused", v: "If this line fails, someone bypassed the edge." },
+    { k: "Restricted ports refuse unlisted sources", v: "Probed from a source that must be denied, then one that must be allowed." },
   ]},
-  { name: "The backups a rebuild would restore from", rows: [
-    { k: "The cluster's own state was snapshotted recently", v: "The only repair is a rebuild, and a rebuild restores from this. For months nothing asserted that it had run; a restore drill passing once says the mechanism worked, not that last night produced a file." },
-    { k: "Every declared application backup succeeded recently", v: "One line per backup the configuration declares; two today. The last success is what counts, not the last attempt: a job that fires every night and fails every night looks scheduled forever. A declared backup that has disappeared from the cluster is a finding, not one fewer thing to check." },
+  { name: "The backups a rebuild restores from", hue: 4, claims: [
+    { k: "The cluster's state was snapshotted recently", v: "A rebuild restores from this, so the check asks for a recent snapshot, not a working mechanism." },
+    { k: "Every declared application backup succeeded recently", v: "The last success counts, not the last attempt. A declared backup that disappears is a finding." },
   ]},
 ];
 
@@ -38,13 +38,13 @@ export const groups: { name: string; rows: Row[] }[] = [
 // it is a finding, and the count on the strip says so.
 export const failOnly = {
   title: "And one line that exists only to fail",
-  body: "A failed unit that is not on the watch list is still a failed unit. If the host's service manager reports itself degraded, the run fails and names the unit. This line has no passing form: it is never counted, and it appears only when something has failed.",
+  body: "If the host's service manager reports itself degraded, the run fails and names the unit, watch list or not. This line has no passing form and is never counted.",
 };
 
 export const why = [
-  { title: "Why it runs from outside", body: "A control that runs inside what it is checking cannot report that the thing is gone. The check runs on the hypervisors as a timer, with a read-only identity, and pages on failure. What it cannot yet do is page on its own silence, and that gap is written down." },
-  { title: "Why the output is the interface", body: "The check reports what is wrong, never that it ran. A clean exit with no findings is distinguishable from a broken run, and a run that could not see something fails loudly instead of passing quietly." },
-  { title: "Why \"not checked\" is not \"held\"", body: "For a while, a peer that could not be reached was filed as an invariant that held, and the count went up when the check could see less. That is fixed: a thing not asserted is printed as information and counted as nothing. The number on the strip is the number of properties actually asserted that morning: never more, and on a bad morning, fewer." },
+  { title: "Why it runs from outside", body: "A check inside the cluster cannot report that the cluster is gone. This one runs on the hypervisors with a read-only identity and pages on failure. It cannot yet page on its own silence, and that gap is written down." },
+  { title: "Why the output is the interface", body: "The check reports what is wrong, never just that it ran. A run that could not see something fails loudly instead of passing quietly." },
+  { title: "Why \"not checked\" is not \"held\"", body: "A peer that could not be reached once counted as held, so the count rose when the check saw less. Now anything not asserted counts as nothing. The number on the strip is what was asserted that morning." },
 ];
 
 export const members = {

@@ -1,9 +1,9 @@
-import type { Row } from "@/app/components/ui";
+import type { Claim } from "@/app/components/instrument";
 import { site } from "@/site.config";
 
 export const intro = {
   title: "Resiliency",
-  paragraphs: ["There is no repair path. A node that is wrong is not fixed; it is destroyed and built again from the declaration, and the result is compared with the previous build so that the only difference is the thing that was meant to change. The same tool that does this on a Tuesday afternoon is the tool that would rebuild the whole estate after a fire."],
+  paragraphs: ["There is no repair path. A node that is wrong is destroyed and built again from the declaration, then compared with the previous build so the only difference is the one that was meant. The tool that does this on a Tuesday afternoon is the one that would rebuild the estate after a fire."],
   rule: "Rebuilt, never repaired. If a rebuild has not been rehearsed, the recovery it promises does not exist.",
 };
 
@@ -15,42 +15,41 @@ export const scorecard = [
 ];
 
 export const principles = [
-  { title: "Two tools, one path", body: "Day to day, a node change is a roll: destroy one node, rebuild it from the declaration, wait for quorum and storage to be healthy, then the next. The catastrophe tool is the same code with the loop removed. Both refuse to run unless they are a signed, released build." },
-  { title: "The gate, not the operator, says when", body: "Between every node, the gate asserts what the cluster's own status will not: the state store has quorum, every volume has its replicas, the placement rule that keeps two copies of a thing apart still holds. It has failed, loudly, and each failure is a numbered decision." },
-  { title: "What it cannot survive, in writing", body: "One of the two hypervisors carries the quorum. Losing it means the cluster is gone and is rebuilt from the declaration and the last backup. That is a decision, taken because the alternative spent capacity on a case that is rehearsed instead." },
+  { title: "Two tools, one path", body: "Day to day, a node change is a roll: rebuild one node from the declaration, wait for quorum and storage, then the next. The catastrophe tool is the same code without the loop. Both refuse to run unless they are a signed, released build." },
+  { title: "The gate, not the operator, says when", body: "Between nodes, the gate asserts what the cluster's own status will not: quorum, every volume's replicas, and the placement rule that keeps two copies apart. Each time it has failed, the failure became a numbered decision." },
+  { title: "What it cannot survive, in writing", body: "One hypervisor carries the quorum. Losing it means a rebuild from the declaration and the last backup. That was decided, because the alternative spent capacity on a case that is rehearsed instead." },
 ];
 
 // A roll, as the tool performs it: one node at a time, every step a gate the
-// tool asserts before the next. About seventy minutes for five nodes on the
-// last one. No coordinates: the steps are the same on any fleet.
+// tool asserts before the next. No coordinates: the steps are the same on any fleet.
 export const roll = {
   title: "A roll, node by node",
-  sub: "five nodes · about seventy minutes · the operator watches, and is not asked for anything",
-  rows: [
-    { k: "Refuse if a volume would be orphaned", v: "Before anything is destroyed: if this node holds the last healthy replica of any volume, the roll stops and says so. Destroying it would be data loss dressed as maintenance." },
-    { k: "Destroy the node", v: "The virtual machine is deleted and its definition removed. There is no snapshot to fall back to; the declaration is the fallback." },
-    { k: "Remove it from the state store and the cluster", v: "The member is pruned from the state store's quorum, the node is forgotten, and every volume still attached to it is detached, so the workload that mounted it moves in seconds rather than after a timeout." },
-    { k: "Rebuild it from the declaration", v: "A fresh image is fetched by checksum, a one-time join token is minted, and the node is created from the same rendered configuration as last time. The two are compared byte for byte, so the only difference is the thing that was meant to change." },
-    { k: "Readmit its storage", v: "The rebuilt node returns with a new disk identity. Storage keeps the old one on record; the tool evicts, removes and re-adds the disk under the new identity with the same reservation. This was five hand-run scripts one roll ago." },
-    { k: "Wait for quorum, then for every volume", v: "System pods running, every state-store member serving, every volume healthy with its replicas in place. Only then the next node. A cluster that has not absorbed one removal is not given a second." },
-    { k: "Verify the version, and go again", v: "The node reports the pinned version or the roll halts. When the last node passes, the nightly check runs against the result." },
-  ] satisfies Row[],
+  sub: "one node at a time · the operator watches, and is not asked for anything",
+  steps: [
+    { k: "Refuse if a volume would be orphaned", v: "If this node holds the last healthy replica of any volume, the roll stops before anything is destroyed." },
+    { k: "Destroy the node", v: "There is no snapshot to fall back to. The declaration is the fallback." },
+    { k: "Remove it from the state store and the cluster", v: "Its volumes are detached, so the workloads that mounted them move in seconds rather than after a timeout." },
+    { k: "Rebuild it from the declaration", v: "The same rendered configuration as last time, compared byte for byte." },
+    { k: "Readmit its storage", v: "The rebuilt node's disk returns under a new identity, with the same reservation." },
+    { k: "Wait for quorum, then for every volume", v: "A cluster that has not absorbed one removal is not given a second." },
+    { k: "Verify the version, and go again", v: "A wrong version halts the roll. After the last node, the nightly check runs against the result." },
+  ] satisfies Claim[],
 };
 
-// What the last two rolls asked a human to do. Each answer became code in the
+// What the last roll asked a human to do. Each answer became code in the
 // next release; the roll after that is the proof, or the next entry here.
 export const attended = {
   title: "What needed a human, and what happened to it",
-  sub: "the last roll: four things · each is now a step · the next roll is the proof",
-  rows: [
-    { k: "The state-store probe used the operator's identity", v: "It asked with a read-only identity that is forbidden that path, and reported the store unhealthy on every node while it was fine. The tool now carries its own identity for every probe." },
-    { k: "Storage refused every rebuilt node's disk", v: "Five nodes, five identical hand-run repairs. The re-admission above is the repair, in code, as a step." },
-    { k: "A dead node's volumes stayed attached", v: "The workload that mounted one waited out a controller timeout: minutes of an application answering 500. Detaching is now a step between forgetting the node and rebuilding it." },
-    { k: "A database started before its search index", v: "The roll did not cause it, but it exposed it, and the workload now declares the dependency. A platform that rebuilds nodes routinely surfaces every startup-order assumption its tenants have." },
-  ] satisfies Row[],
+  sub: "the last roll · each is now a step · the next roll is the proof",
+  fixes: [
+    { title: "The state-store probe used the operator's identity", was: "A forbidden path made the store look unhealthy on every node while it was fine.", now: "The tool carries its own identity for every probe." },
+    { title: "Storage refused every rebuilt node's disk", was: "The same repair, by hand, on every node.", now: "Readmission is a step in the roll." },
+    { title: "A dead node's volumes stayed attached", was: "An application answered 500 for minutes while a controller timed out.", now: "Detaching is a step before the rebuild." },
+    { title: "A database started before its search index", was: "The roll exposed a startup-order assumption in a tenant.", now: "The workload declares the dependency." },
+  ],
 };
 
 export const members = {
-  title: "For members: seven rebuilds, three failures, what each one taught",
+  title: "For members: every rebuild, every failure, and what each one taught",
   body: "The samples in order, with the timings. The rebuild that concentrated the whole platform on one node. The placement gate that passed while the property it protects was broken. The detached volume that a series of node replacements eroded to nothing, and the check that now runs before a node is destroyed.",
 };

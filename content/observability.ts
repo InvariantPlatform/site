@@ -2,7 +2,7 @@ import type { Row, Step } from "@/app/components/ui";
 
 export const intro = {
   title: "Observability",
-  paragraphs: ["The metrics store, the log store and the dashboards run on the hypervisors, beside the cluster, as ordinary host services. It is the less elegant place to put them and the only place that can report the cluster is gone. Everything in this tier is provisioned from a repository and restarted when its configuration changes, because a file written is not a file applied. This platform learned that at every layer."],
+  paragraphs: ["The metrics store, the log store, the dashboards and the alert rules run on the hypervisors, beside the cluster, as ordinary host services. It is the less elegant place to put them and the only place that can report the cluster is gone. Everything in this tier is provisioned from a repository and restarted when its configuration changes, because a file written is not a file applied. This platform learned that at every layer."],
   rule: "A monitor inside the thing it monitors cannot report that the thing is gone.",
 };
 
@@ -36,5 +36,5 @@ export const gaps = {
 
 export const members = {
   title: "For members: the dashboards, the alert rules, and the alerting gap",
-  body: "The dashboards, built around the questions that were unanswerable the night they were needed, and later the live ones, where organization membership is the login. Every probe with the incident that produced it, including the job that reported success every day until the day it had something to say. And the audit stream that turned out to be a memory leak, found with a heap profile.",
+  body: "The dashboards, built around the questions that were unanswerable the night they were needed, and later the live ones, where organization membership is the login. Every alert rule with the incident that produced it, including the one that reported success every day until the day it had something to say. And the audit stream that turned out to be a memory leak, found with a heap profile.",
 };

@@ -137,9 +137,9 @@ export function Flow({ steps }: { steps: Step[] }) {
 
 export function Scorecard({ cells }: { cells: { n: number | string; label: string }[] }) {
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
       {cells.map((c) => (
-        <div key={c.label} className="border border-hair px-5 py-4">
+        <div key={c.label} className="border border-hair px-4 py-3.5 md:px-5 md:py-4">
           <div className="font-mono text-3xl font-medium leading-none">{c.n}</div>
           <div className="mt-2 text-[13px] leading-snug text-muted">{c.label}</div>
         </div>

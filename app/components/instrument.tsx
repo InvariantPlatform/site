@@ -102,3 +102,59 @@ export function SectionIcon({ href }: { href: string }) {
   );
 }
 export const sectionHue = (href: string) => HUES[ICON_HUE[href] ?? 0];
+
+/** Claims grouped by layer: one module per layer, one short line per claim. */
+export type Claim = { k: string; v: string };
+export function ClaimGroups({ groups }: { groups: { name: string; hue: number; claims: Claim[] }[] }) {
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-12 pt-6">
+      {groups.map((g) => (
+        <Module key={g.name} color={HUES[g.hue]} tag={g.name} className="p-5 md:p-7">
+          <ul className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-x-10 gap-y-5">
+            {g.claims.map((c) => (
+              <li key={c.k} className="flex gap-3">
+                <span className="led mt-1 shrink-0" style={{ width: 9, height: 9 }} aria-hidden="true" />
+                <span>
+                  <span className="block text-[15px] leading-snug">{c.k}</span>
+                  <span className="block mt-1 text-[13.5px] leading-relaxed text-muted">{c.v}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Module>
+      ))}
+    </div>
+  );
+}
+
+/** A sequence where order matters: a lit rail, a node per step, one line each. */
+export function Timeline({ steps }: { steps: Claim[] }) {
+  return (
+    <ol className="relative mt-6 ml-1 border-l border-amber-dark/60">
+      {steps.map((s) => (
+        <li key={s.k} className="relative pl-7 pb-6 last:pb-0">
+          <span className="absolute -left-[5px] top-[7px] h-[9px] w-[9px] rounded-full bg-amber shadow-[0_0_8px_rgba(245,158,11,.7)]" aria-hidden="true" />
+          <span className="block text-[15px] leading-snug">{s.k}</span>
+          <span className="block mt-1 text-[13.5px] leading-relaxed text-muted max-w-[44em]">{s.v}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** What went wrong and what replaced it: a pair per card. */
+export function FixCards({ fixes }: { fixes: { title: string; was: string; now: string }[] }) {
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-4 pt-6">
+      {fixes.map((f) => (
+        <div key={f.title} className="border border-hair-2 bg-deep p-5">
+          <span className="block text-[15px] font-medium leading-snug">{f.title}</span>
+          <dl className="mt-3 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 text-[13.5px] leading-relaxed">
+            <dt className="label text-dim pt-0.5">was</dt><dd className="text-muted">{f.was}</dd>
+            <dt className="label text-amber pt-0.5">now</dt><dd>{f.now}</dd>
+          </dl>
+        </div>
+      ))}
+    </div>
+  );
+}
