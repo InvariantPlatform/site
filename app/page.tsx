@@ -14,7 +14,7 @@ export default function Home() {
     <>
       <section className="blueprint pt-14 md:pt-[88px] pb-12 md:pb-16 border-b border-hair">
         <Wrap>
-          <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-[7fr_6fr] gap-10 md:gap-[72px] items-start">
+          <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-[minmax(0,7fr)_minmax(0,6fr)] gap-10 md:gap-[72px] items-start">
             <div className="flex flex-col gap-7">
               <span className="label text-dim">Thesis</span>
               <h1 className="font-mono text-[30px] md:text-[38px] font-medium leading-[1.15] tracking-[-0.02em]">

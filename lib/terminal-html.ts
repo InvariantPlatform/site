@@ -15,12 +15,17 @@ export type TermLine = { status: "ok" | "FAIL"; text: string };
 
 export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// Each line is a block with a hanging indent the width of "  FAIL ", so a long
+// finding wraps under its own text instead of under the tag. A finding is the
+// longest line the terminal ever shows, and the one that most needs reading.
+const LINE = `<span style="display:block;padding-left:7ch;text-indent:-7ch">`;
+
 export function terminalHtml(lines: TermLine[], summary: string): string {
   const body = lines
     .map((l) =>
       l.status === "ok"
-        ? `  <span class="text-amber">ok  </span> ${esc(l.text)}\n`
-        : `  <span class="text-background bg-amber px-[3px] font-medium">FAIL</span> ${esc(l.text)}\n`,
+        ? `${LINE}  <span class="text-amber">ok  </span> ${esc(l.text)}</span>`
+        : `${LINE}  <span class="text-background bg-amber px-[3px] font-medium">FAIL</span> ${esc(l.text)}</span>`,
     )
     .join("");
   return `${body}<span class="text-muted">${esc(summary)}</span>`;

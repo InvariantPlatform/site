@@ -20,7 +20,7 @@ export default function Terminal({ title, command, lines, summary, caption }: { 
           <span data-status="terminal-title" dangerouslySetInnerHTML={{ __html: esc(title) }} />
         </div>
         <pre
-          className="m-0 py-4 font-mono text-[11px] md:text-[13px] leading-[1.7] text-[#c9ced4] overflow-x-auto"
+          className="m-0 py-4 font-mono text-[11px] md:text-[13px] leading-[1.7] text-[#c9ced4] whitespace-pre-wrap break-words"
           data-status="terminal"
           dangerouslySetInnerHTML={{ __html: terminalHtml(lines, summary) }}
         />
